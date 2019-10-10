@@ -1,0 +1,13 @@
+@apiUrl = http://localhost:5000
+
+### Hello
+GET {{apiUrl}}/hello
+
+### Hello POST
+POST {{apiUrl}}/hello
+content-type: application/json
+
+{
+  "firstName": "Łukasz",
+  "lastName": "K."
+}
