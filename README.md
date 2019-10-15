@@ -7,5 +7,10 @@ Source code based on [TypeScript Express tutorial](https://wanago.io/courses/typ
 * NodeJS
 * Express
 * TypeScript
-* ts-node
+* ts-node-dev
+* InversifyJS as a DI container
 * MongoDB
+
+## Start
+
+Type `npm run dev` in terminal, send exemplary request from [http queries](server-queries.http) file (with [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) VSCode extension).

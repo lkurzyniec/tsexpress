@@ -1,10 +1,11 @@
+import { multiInject, injectable } from "inversify";
 import { BaseController } from "./../controllers/base.controller";
-import { HelloController } from "./../controllers/hello.controller";
 
+@injectable()
 export class ControllersProvidr {
-  public static getAll(): BaseController[] {
-    return [
-      new HelloController()
-    ];
+  @multiInject(BaseController) private controllers: BaseController[];
+
+  public getAllControllers(): BaseController[] {
+    return this.controllers;
   }
 }

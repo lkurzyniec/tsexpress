@@ -4,7 +4,13 @@
         "target": "es2017",
         "outDir": "./dist",
         "baseUrl": "./src",
-        "module": "commonjs"
+        "module": "commonjs",
+        "moduleResolution": "node",
+
+        "types": ["reflect-metadata"],
+        "lib": ["es6", "dom"],
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true
     },
     "include": [
         "src/**/*.ts"

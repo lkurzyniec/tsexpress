@@ -11,3 +11,11 @@ content-type: application/json
   "firstName": "Łukasz",
   "lastName": "K."
 }
+
+# ================= BOOKS ======================= #
+
+### GET
+GET {{apiUrl}}/books
+
+### GET 2
+GET {{apiUrl}}/books/2
