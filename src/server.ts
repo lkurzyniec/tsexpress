@@ -1,9 +1,7 @@
-import { App } from './app';
+import { Container } from './configurations/inversify.config';
 
-const port = 5000;
+const container = new Container();
+const app = container.getApp();
 
-const app = new App(
-  port,
-);
-
+app.initialize(process.env);
 app.listen();

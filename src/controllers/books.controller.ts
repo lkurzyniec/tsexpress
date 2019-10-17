@@ -1,6 +1,6 @@
 import { BooksRepository } from './../repositories/books.repository';
-import { injectable, inject } from "inversify";
-import { BaseController } from "./base.controller";
+import { injectable, inject } from 'inversify';
+import { BaseController } from './base.controller';
 
 @injectable()
 export class BooksController extends BaseController {

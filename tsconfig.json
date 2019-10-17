@@ -7,7 +7,7 @@
         "module": "commonjs",
         "moduleResolution": "node",
 
-        "types": ["reflect-metadata"],
+        "types": ["reflect-metadata", "node"],
         "lib": ["es6", "dom"],
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true

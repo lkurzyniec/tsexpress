@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { injectable } from "inversify";
-import "reflect-metadata";
+import { injectable } from 'inversify';
+import 'reflect-metadata'
 
 @injectable()
 export abstract class BaseController {
