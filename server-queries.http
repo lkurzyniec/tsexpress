@@ -12,10 +12,36 @@ content-type: application/json
   "lastName": "K."
 }
 
+# ================= AUTHORS ======================= #
+
+### GET all
+GET {{apiUrl}}/authors
+
+### POST
+// @name author
+POST {{apiUrl}}/authors
+content-type: application/json
+
+{
+  "fullName": "Stephen King"
+}
+
+### PUT
+// @name author
+PUT {{apiUrl}}/authors/{{author.response.body.$._id}}
+content-type: application/json
+
+{
+  "fullName": "Stephen Edwin King"
+}
+
+### GET one
+// @name author
+GET {{apiUrl}}/authors/{{author.response.body.$._id}}
+
+### DELETE
+DELETE {{apiUrl}}/authors/{{author.response.body.$._id}}
+
 # ================= BOOKS ======================= #
 
-### GET
-GET {{apiUrl}}/books
 
-### GET 2
-GET {{apiUrl}}/books/2

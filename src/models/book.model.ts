@@ -1,12 +1,18 @@
-import { BaseModel } from './base.model';
+import { Author } from './author.model';
+import { model, Document, Schema } from 'mongoose';
 
-export class BookModel extends BaseModel {
-  public id: number;
-  public author: string;
-  public title: string;
+const bookSchema = new Schema({
+  author: {
+    ref: 'Author',
+    type: Schema.Types.ObjectId
+  },
+  title: Schema.Types.String,
+});
 
-  constructor(init?: Partial<BookModel>){
-    super();
-    Object.assign(this, init);
-  }
+export interface Book {
+  _id: string;
+  title: string;
+  author: Author;
 }
+
+export const BookModel = model<Book & Document>('Book', bookSchema);

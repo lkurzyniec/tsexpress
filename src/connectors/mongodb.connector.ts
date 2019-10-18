@@ -12,17 +12,17 @@ export class MongoDbConnector {
   public connect() {
     var connector;
     if (isNullOrWhitespace(this.appConfig.mongoUser) && isNullOrWhitespace(this.appConfig.mongoPassword)) {
-      connector = mongoose.connect(`mongodb://${this.appConfig.mongoHost}:${this.appConfig.mongoPort}/${this.appConfig.mongoDatabase}`);
+      connector = mongoose.connect(`mongodb://${this.appConfig.mongoHost}:${this.appConfig.mongoPort}/${this.appConfig.mongoDatabase}`, { useNewUrlParser: true });
     } else {
-      connector = mongoose.connect(`mongodb://${this.appConfig.mongoUser}:${this.appConfig.mongoPassword}@${this.appConfig.mongoHost}:${this.appConfig.mongoPort}/${this.appConfig.mongoDatabase}`);
+      connector = mongoose.connect(`mongodb://${this.appConfig.mongoUser}:${this.appConfig.mongoPassword}@${this.appConfig.mongoHost}:${this.appConfig.mongoPort}/${this.appConfig.mongoDatabase}`, { useNewUrlParser: true });
     }
 
     connector.then(
       () => {
-        this.dbLogger.info(`Successfully connectedd to ${this.appConfig.mongoDatabase}`);
+        this.dbLogger.info(`Successfully connectedd to '${this.appConfig.mongoDatabase}'`);
       },
       err => {
-        this.dbLogger.error(err, `Error while connecting to ${this.appConfig.mongoDatabase}`);
+        this.dbLogger.error(err, `Error while connecting to '${this.appConfig.mongoDatabase}'`);
       }
     );
   }

@@ -1,28 +1,28 @@
-import { AppError } from './../errors/app.error';
-import { BaseModel } from './../models/base.model';
-import { injectable } from 'inversify';
+import { Model, Document, Schema } from 'mongoose';
 
-@injectable()
-export abstract class BaseRepository<TModel extends BaseModel>{
-  protected data: TModel[];
+export abstract class BaseRepository<TModel>{
+  constructor(protected mongooseModel: Model<TModel & Document>) {
 
-  constructor() {
-    this.initialize();
   }
 
-  protected initialize(): void {
-    this.data = [];
+  public findById(id: string): Promise<TModel> {
+    return this.mongooseModel.findById(id).exec();
   }
 
-  public getAll(): TModel[] {
-    return this.data;
+  public getAll(): Promise<TModel[]> {
+    return this.mongooseModel.find().exec();
   }
 
-  public single(predicate: (item: TModel) => boolean): TModel {
-    const filter = this.data.filter(item => predicate(item));
-    if (filter.length > 1) {
-      throw new AppError('More than single result');
-    }
-    return filter.length === 0 ? null : filter[0];
+  public create(data: TModel): Promise<TModel> {
+    const entity = new this.mongooseModel(data);
+    return entity.save();
+  }
+
+  public update(id: string, data: TModel): Promise<TModel> {
+    return this.mongooseModel.findByIdAndUpdate(id, data, { new: true }).exec();
+  }
+
+  public delete(id: string): Promise<TModel> {
+    return this.mongooseModel.findByIdAndDelete(id).exec();
   }
 }

@@ -9,7 +9,7 @@ Source code based on [TypeScript Express tutorial](https://wanago.io/courses/typ
 * TypeScript
 * ts-node-dev
 * InversifyJS as a DI container
-* MongoDB
+* MongoDB with mongoose
 * dotenv and envalid
 
 ## Start
@@ -20,22 +20,24 @@ Source code based on [TypeScript Express tutorial](https://wanago.io/courses/typ
 docker run --name mongodb -d -p 27017:27017 mongo:latest
 ```
 
-### Configuration
+### Configuration (environment variables)
 
 Create `.env` file in the root directory as follows:
 
 ```ini
-MONGO_USER=lkurzyniec
-MONGO_PASSWORD=samplePWD
+MONGO_USER=
+MONGO_PASSWORD=
 MONGO_HOST=localhost
 MONGO_PORT=27017
-MONGO_DATABASE=books
-PORT=5000
+MONGO_DATABASE=libraryDB
+APPLICATION_PORT=5000
 ```
+
+Variables `MONGO_USER` and `MONGO_PASSWORD` can be empty.
 
 ### Start the application
 
-Type `npm run dev` in terminal, by default the application is available under `http://localhost:5000/`.
+Type `npm run dev` in terminal, the application will be available under `http://localhost:{APPLICATION_PORT}/` where `APPLICATION_PORT` is environment variable. By default is `http://localhost:5000/`.
 
 To interact with API you can either send requests with [Postman](https://www.getpostman.com/) or send exemplary
 request from [http queries](server-queries.http) file with [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client)

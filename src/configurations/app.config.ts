@@ -29,9 +29,9 @@ export class AppConfig {
     return this._mongoDatabase;
   }
 
-  private _port: number;
-  public get port(): number {
-    return this._port;
+  private _applicationPort: number;
+  public get applicationPort(): number {
+    return this._applicationPort;
   }
 
   public initialize(processEnv: NodeJS.ProcessEnv) {
@@ -41,7 +41,7 @@ export class AppConfig {
       MONGO_HOST: host({ devDefault: 'localhost' }),
       MONGO_PORT: port({ default: 27017 }),
       MONGO_DATABASE: str(),
-      PORT: port({ devDefault: 5000, desc: 'Port number on which the Application will run' }),
+      APPLICATION_PORT: port({ devDefault: 5000, desc: 'Port number on which the Application will run' }),
     });
 
     this._mongoUser = env.MONGO_USER;
@@ -49,6 +49,6 @@ export class AppConfig {
     this._mongoHost = env.MONGO_HOST;
     this._mongoPort = env.MONGO_PORT;
     this._mongoDatabase = env.MONGO_DATABASE;
-    this._port = env.PORT;
+    this._applicationPort = env.APPLICATION_PORT;
   }
 }

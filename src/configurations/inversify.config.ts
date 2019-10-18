@@ -1,3 +1,8 @@
+import { AppLogger } from './../loggers/app.logger';
+import { BookModel } from './../models/book.model';
+import { AuthorModel } from './../models/author.model';
+import { AuthorsRepository } from './../repositories/authors.repository';
+import { AuthorsController } from './../controllers/authors.controller';
 import { HelloController } from './../controllers/hello.controller';
 import { MongoDbConnector } from './../connectors/mongodb.connector';
 import { App } from './../app';
@@ -35,18 +40,21 @@ export class Container {
     return new ContainerModule((bind: interfaces.Bind) => {
       bind<BaseController>(BaseController).to(BooksController);
       bind<BaseController>(BaseController).to(HelloController);
+      bind<BaseController>(BaseController).to(AuthorsController);
     });
   }
 
   private getRepositoriesModule(): ContainerModule {
     return new ContainerModule((bind: interfaces.Bind) => {
-      bind<BooksRepository>(BooksRepository).toSelf();
+      bind<AuthorsRepository>(AuthorsRepository).toConstantValue(new AuthorsRepository(AuthorModel));
+      bind<BooksRepository>(BooksRepository).toConstantValue(new BooksRepository(BookModel));
     });
   }
 
   private getLoggersModule(): ContainerModule {
     return new ContainerModule((bind: interfaces.Bind) => {
       bind<DbLogger>(DbLogger).toSelf();
+      bind<AppLogger>(AppLogger).toSelf();
     });
   }
 }
