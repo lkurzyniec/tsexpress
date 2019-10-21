@@ -11,15 +11,17 @@ export class MongoDbConnector {
 
   public connect() {
     var connector;
+    const connectionOptions = { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false };
     if (isNullOrWhitespace(this.appConfig.mongoUser) && isNullOrWhitespace(this.appConfig.mongoPassword)) {
-      connector = mongoose.connect(`mongodb://${this.appConfig.mongoHost}:${this.appConfig.mongoPort}/${this.appConfig.mongoDatabase}`, { useNewUrlParser: true });
+      connector = mongoose.connect(`mongodb://${this.appConfig.mongoHost}:${this.appConfig.mongoPort}/${this.appConfig.mongoDatabase}`, connectionOptions);
     } else {
-      connector = mongoose.connect(`mongodb://${this.appConfig.mongoUser}:${this.appConfig.mongoPassword}@${this.appConfig.mongoHost}:${this.appConfig.mongoPort}/${this.appConfig.mongoDatabase}`, { useNewUrlParser: true });
+      connector = mongoose.connect(`mongodb://${this.appConfig.mongoUser}:${this.appConfig.mongoPassword}@${this.appConfig.mongoHost}:${this.appConfig.mongoPort}/${this.appConfig.mongoDatabase}`, connectionOptions);
     }
+    //mongoose.set('debug', true);
 
     connector.then(
       () => {
-        this.dbLogger.info(`Successfully connectedd to '${this.appConfig.mongoDatabase}'`);
+        this.dbLogger.info(`Successfully connected to '${this.appConfig.mongoDatabase}'`);
       },
       err => {
         this.dbLogger.error(err, `Error while connecting to '${this.appConfig.mongoDatabase}'`);

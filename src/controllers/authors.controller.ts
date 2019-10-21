@@ -31,8 +31,8 @@ export class AuthorsController extends BaseController {
   }
 
   private create = async (request: Request, response: Response) => {
-    const data: Author = request.body;
-    const author: Author = await this.repo.create(data);
+    const data = request.body as Author;
+    const author = await this.repo.create(data);
     response
       .location(`${this.path}/${author._id}`)
       .status(StatusHelper.status201Created)

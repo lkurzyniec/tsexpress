@@ -29,13 +29,14 @@ export class App {
 
     this.initializeMiddlewares();
     this.initializeControllers();
+    this.initializeErrorHandlers();
 
     this.isInitialized = true;
   }
 
   public listen() {
     if (!this.isInitialized) {
-      throw new AppError("Call initialize() before.");
+      throw new AppError(`Call initialize() before.`);
     }
 
     this.app.listen(this.appConfig.applicationPort, () => {
@@ -44,9 +45,12 @@ export class App {
   }
 
   private initializeMiddlewares(): void {
-    this.app.use(ErrorMiddleware.response500);
     this.app.use(jsonBodyParser());
     this.app.use(LoggingMiddleware.logRequest);
+  }
+
+  private initializeErrorHandlers(): void {
+    this.app.use(ErrorMiddleware.response500);
   }
 
   private initializeControllers(): void {

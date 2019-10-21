@@ -15,7 +15,11 @@ content-type: application/json
 # ================= AUTHORS ======================= #
 
 ### GET all
+// @name authors
 GET {{apiUrl}}/authors
+
+### GET one
+GET {{apiUrl}}/authors/{{authors.response.body.$.[0]._id}}
 
 ### POST
 // @name author
@@ -44,4 +48,37 @@ DELETE {{apiUrl}}/authors/{{author.response.body.$._id}}
 
 # ================= BOOKS ======================= #
 
+### GET all
+// @name books
+GET {{apiUrl}}/books
 
+### GET one
+// @name book
+GET {{apiUrl}}/books/{{books.response.body.$.[0]._id}}
+
+### POST
+// @name book
+POST {{apiUrl}}/books
+content-type: application/json
+
+{
+  "title": "Doctor Sleep",
+  "author": {
+    "_id": "{{author.response.body.$._id}}"
+  }
+}
+
+### PUT
+// @name book
+PUT {{apiUrl}}/books/{{book.response.body.$._id}}
+content-type: application/json
+
+{
+  "title": "Doctor Sleep {{$randomInt 0 10}}",
+  "author": {
+    "_id": "{{author.response.body.$._id}}"
+  }
+}
+
+### DELETE
+DELETE {{apiUrl}}/books/{{book.response.body.$._id}}

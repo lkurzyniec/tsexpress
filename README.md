@@ -1,4 +1,4 @@
-# tsexpress-tutorial
+# tsexpress
 
 Source code based on [TypeScript Express tutorial](https://wanago.io/courses/typescript-express-tutorial/).
 
@@ -16,8 +16,14 @@ Source code based on [TypeScript Express tutorial](https://wanago.io/courses/typ
 
 ### Start MongoDB in Docker
 
+Create volume to persist data.
+
 ```docker
-docker run --name mongodb -d -p 27017:27017 mongo:latest
+docker volume create --name=mongodata
+```
+
+```docker
+docker run --name mongodb -v mongodata:/data/db -d -p 27017:27017 mongo:latest
 ```
 
 ### Configuration (environment variables)
@@ -32,8 +38,6 @@ MONGO_PORT=27017
 MONGO_DATABASE=libraryDB
 APPLICATION_PORT=5000
 ```
-
-Variables `MONGO_USER` and `MONGO_PASSWORD` can be empty.
 
 ### Start the application
 

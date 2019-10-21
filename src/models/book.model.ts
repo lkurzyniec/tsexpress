@@ -4,7 +4,8 @@ import { model, Document, Schema } from 'mongoose';
 const bookSchema = new Schema({
   author: {
     ref: 'Author',
-    type: Schema.Types.ObjectId
+    type: Schema.Types.ObjectId,
+    required: true
   },
   title: Schema.Types.String,
 });
