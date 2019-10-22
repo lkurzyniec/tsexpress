@@ -5,8 +5,6 @@ import { injectable } from "inversify";
 
 @injectable()
 export class BooksRepository extends BaseRepository<Book> {
-  protected populatePath: string = 'author';
-
   constructor(mongooseModel: Model<Book & Document>) {
     super(mongooseModel);
   }

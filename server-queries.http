@@ -19,9 +19,10 @@ content-type: application/json
 GET {{apiUrl}}/authors
 
 ### GET one
+// @name author
 GET {{apiUrl}}/authors/{{authors.response.body.$.[0]._id}}
 
-### POST
+### CREATE
 // @name author
 POST {{apiUrl}}/authors
 content-type: application/json
@@ -30,7 +31,7 @@ content-type: application/json
   "fullName": "Stephen King"
 }
 
-### PUT
+### UPDATE
 // @name author
 PUT {{apiUrl}}/authors/{{author.response.body.$._id}}
 content-type: application/json
@@ -38,10 +39,6 @@ content-type: application/json
 {
   "fullName": "Stephen Edwin King"
 }
-
-### GET one
-// @name author
-GET {{apiUrl}}/authors/{{author.response.body.$._id}}
 
 ### DELETE
 DELETE {{apiUrl}}/authors/{{author.response.body.$._id}}
@@ -56,7 +53,7 @@ GET {{apiUrl}}/books
 // @name book
 GET {{apiUrl}}/books/{{books.response.body.$.[0]._id}}
 
-### POST
+### CREATE
 // @name book
 POST {{apiUrl}}/books
 content-type: application/json
@@ -68,7 +65,7 @@ content-type: application/json
   }
 }
 
-### PUT
+### UPDATE
 // @name book
 PUT {{apiUrl}}/books/{{book.response.body.$._id}}
 content-type: application/json

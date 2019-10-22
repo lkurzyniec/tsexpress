@@ -1,26 +1,18 @@
-import { Model, Document, Schema } from 'mongoose';
+import { Model, Document } from 'mongoose';
 
 export abstract class BaseRepository<TModel>{
-  protected abstract populatePath: string;
-
   constructor(
     private mongooseModel: Model<TModel & Document>
-    ) {
+  ) {
 
   }
 
   public findById(id: string): Promise<TModel> {
-    return this.mongooseModel.findById(id)
-      .populate(this.populatePath, "-__v")
-      .select('-__v')
-      .exec();
+    return this.mongooseModel.findById(id).exec();
   }
 
   public getAll(): Promise<TModel[]> {
-    return this.mongooseModel.find()
-      .populate(this.populatePath, "-__v")
-      .select('-__v')
-      .exec();
+    return this.mongooseModel.find().exec();
   }
 
   public async create(data: TModel): Promise<TModel> {
@@ -35,7 +27,6 @@ export abstract class BaseRepository<TModel>{
   }
 
   public delete(id: string): Promise<TModel> {
-    return this.mongooseModel.findByIdAndDelete(id)
-      .exec();
+    return this.mongooseModel.findByIdAndDelete(id).exec();
   }
 }
