@@ -11,6 +11,7 @@ Source code based on [TypeScript Express tutorial](https://wanago.io/courses/typ
 * InversifyJS as a DI container
 * MongoDB with mongoose
 * dotenv and envalid
+* Swagger and SwaggerUI
 
 ## Start
 
@@ -37,6 +38,7 @@ MONGO_HOST=localhost
 MONGO_PORT=27017
 MONGO_DATABASE=libraryDB
 APPLICATION_PORT=5000
+DEBUG=false
 ```
 
 ### Start the application

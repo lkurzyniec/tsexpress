@@ -1,10 +1,20 @@
+import { AppConfig } from './../configurations/app.config';
 import { isNullOrWhitespace } from "./../helpers/string.helper";
-import { injectable } from "inversify";
+import { injectable, inject } from "inversify";
 import 'reflect-metadata';
 
 @injectable()
 export abstract class BaseLogger {
+  @inject(AppConfig) private readonly appConfig: AppConfig;
+
   public abstract type: string;
+
+  public debug(message: any): void {
+    if (!this.appConfig.debug) {
+      return;
+    }
+    console.log(`[DEBUG] ${this.type}: ${message}`);
+  }
 
   public info(message: any): void {
     console.log(`[INFO] ${this.type}: ${message}`);

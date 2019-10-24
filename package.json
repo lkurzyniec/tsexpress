@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "ts-node-dev ./src/server.ts"
+    "dev": "ts-node-dev --no-notify --clear --debounce 1000 ./src/server.ts"
   },
   "repository": {
     "type": "git",
@@ -26,6 +26,9 @@
     "mongoose": "^5.7.5",
     "mongoose-autopopulate": "^0.9.1",
     "reflect-metadata": "^0.1.13",
+    "swagger-jsdoc": "^3.4.0",
+    "swagger-ui-express": "^4.1.2",
+    "txtgen": "^2.2.4",
     "typescript": "^3.6.3"
   },
   "devDependencies": {

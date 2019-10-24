@@ -1,6 +1,8 @@
-import { cleanEnv, str, port, host } from 'envalid';
+import { DevError } from './../errors/dev.error';
+import { cleanEnv, str, port, host, bool } from 'envalid';
 import { injectable } from 'inversify';
 import 'reflect-metadata';
+import { isNullOrWhitespace } from './../helpers/string.helper';
 
 @injectable()
 export class AppConfig {
@@ -34,6 +36,23 @@ export class AppConfig {
     return this._applicationPort;
   }
 
+  private _applicationHost : string;
+  public get applicationHost() : string {
+    return this._applicationHost;
+  }
+
+  private _debug: boolean;
+  public get debug(): boolean {
+    return this._debug;
+  }
+
+  public setApplicationHost(host : string) {
+    if (!isNullOrWhitespace(this._applicationHost)) {
+      throw new DevError(`Variable 'applicationHost' already set-up: '${this._applicationHost}'`);
+    }
+    this._applicationHost = host === '::' ? 'localhost' : host;
+  }
+
   public initialize(processEnv: NodeJS.ProcessEnv) {
     const env = cleanEnv(processEnv, {
       MONGO_USER: str(),
@@ -42,6 +61,7 @@ export class AppConfig {
       MONGO_PORT: port({ default: 27017 }),
       MONGO_DATABASE: str(),
       APPLICATION_PORT: port({ devDefault: 5000, desc: 'Port number on which the Application will run' }),
+      DEBUG: bool({ default: false, devDefault: true }),
     });
 
     this._mongoUser = env.MONGO_USER;
@@ -50,5 +70,6 @@ export class AppConfig {
     this._mongoPort = env.MONGO_PORT;
     this._mongoDatabase = env.MONGO_DATABASE;
     this._applicationPort = env.APPLICATION_PORT;
+    this._debug = env.DEBUG;
   }
 }

@@ -1,3 +1,4 @@
+import { Container as InversifyContainer, interfaces, ContainerModule } from 'inversify';
 import { AppLogger } from './../loggers/app.logger';
 import { BookModel } from './../models/book.model';
 import { AuthorModel } from './../models/author.model';
@@ -11,8 +12,8 @@ import { BaseController } from './../controllers/base.controller';
 import { BooksController } from './../controllers/books.controller';
 import { BooksRepository } from './../repositories/books.repository';
 import { DbLogger } from './../loggers/db.logger';
+import { SwaggerConfig } from './swagger.config';
 
-import { Container as InversifyContainer, interfaces, ContainerModule } from 'inversify';
 
 // more info: https://github.com/inversify/InversifyJS/tree/master/wiki
 
@@ -32,7 +33,8 @@ export class Container {
     this.container.load(this.getControllersModule());
 
     this.container.bind<AppConfig>(AppConfig).toSelf().inSingletonScope();
-    this.container.bind<MongoDbConnector>(MongoDbConnector).toSelf();
+    this.container.bind<SwaggerConfig>(SwaggerConfig).toSelf().inSingletonScope();
+    this.container.bind<MongoDbConnector>(MongoDbConnector).toSelf().inSingletonScope();
     this.container.bind<App>(App).toSelf();
   }
 
