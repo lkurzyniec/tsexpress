@@ -25,6 +25,7 @@ export class AuthorsController extends BaseController {
     this.repo.getAll()
       .then((authors) => {
         response.send(authors);
+        next();
       })
       .catch(next);
   }
@@ -38,8 +39,9 @@ export class AuthorsController extends BaseController {
         } else {
           response.sendStatus(StatusHelper.status404NotFound);
         }
+        next();
       })
-      .catch(next)
+      .catch(next);
   }
 
   private create = async (request: Request, response: Response, next: NextFunction) => {
@@ -50,6 +52,7 @@ export class AuthorsController extends BaseController {
           .location(`${this.path}/${author._id}`)
           .status(StatusHelper.status201Created)
           .send(author);
+        next();
       })
       .catch(next);
   }
@@ -64,6 +67,7 @@ export class AuthorsController extends BaseController {
         } else {
           response.sendStatus(StatusHelper.status404NotFound);
         }
+        next();
       })
       .catch(next);
   }
@@ -77,6 +81,7 @@ export class AuthorsController extends BaseController {
         } else {
           response.sendStatus(StatusHelper.status404NotFound);
         }
+        next();
       })
       .catch(next);
   }

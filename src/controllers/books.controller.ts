@@ -39,8 +39,9 @@ export class BooksController extends BaseController {
         } else {
           response.sendStatus(StatusHelper.status404NotFound);
         }
+        next();
       })
-      .catch(next)
+      .catch(next);
   }
 
   private create = async (request: Request, response: Response, next: NextFunction) => {
@@ -51,6 +52,7 @@ export class BooksController extends BaseController {
           .location(`${this.path}/${book._id}`)
           .status(StatusHelper.status201Created)
           .send(book);
+        next();
       })
       .catch(next);
   }
@@ -65,6 +67,7 @@ export class BooksController extends BaseController {
         } else {
           response.sendStatus(StatusHelper.status404NotFound);
         }
+        next();
       })
       .catch(next);
   }
@@ -78,6 +81,7 @@ export class BooksController extends BaseController {
         } else {
           response.sendStatus(StatusHelper.status404NotFound);
         }
+        next();
       })
       .catch(next);
   }

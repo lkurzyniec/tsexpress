@@ -33,7 +33,7 @@ content-type: application/json
 
 ### UPDATE
 // @name author
-PUT {{apiUrl}}/authors/5daef83bf6e45937f091e062
+PUT {{apiUrl}}/authors/{{author.response.body.$._id}}
 content-type: application/json
 
 {

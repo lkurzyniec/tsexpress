@@ -18,8 +18,9 @@ export class HelloController extends BaseController {
      *        200:
      *          description: Hello message!
      */
-    this.router.get(this.path, (request, response) => {
+    this.router.get(this.path, (request, response, next) => {
       response.send('Hello world!!');
+      next();
     });
 
     /**
@@ -43,11 +44,12 @@ export class HelloController extends BaseController {
      *        200:
      *          description: Your request with some message
      */
-    this.router.post(this.path, (request, response) => {
+    this.router.post(this.path, (request, response, next) => {
       response.send({
         message: sentence(),
         response: { ...request.body }
       });
+      next();
     });
   }
 }
