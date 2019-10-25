@@ -38,7 +38,7 @@ MONGO_HOST=localhost
 MONGO_PORT=27017
 MONGO_DATABASE=libraryDB
 APPLICATION_PORT=5000
-DEBUG=false
+DEBUG=true
 ```
 
 ### Start the application
@@ -49,3 +49,5 @@ To interact with API you can either send requests with [Postman](https://www.get
 request from [http queries](server-queries.http) file with [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client)
 which is VSCode extension.
 If you choose the second option, then remember to double check your `PORT` value from `.env` configuration file with `@apiUrl` variable.
+
+Swagger documentation is under `http://localhost:5000/swagger/`, but there is not much.

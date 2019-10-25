@@ -23,10 +23,14 @@ export abstract class BaseRepository<TModel>{
 
   public async update(id: string, data: TModel): Promise<TModel> {
     const saved = await this.mongooseModel.findByIdAndUpdate(id, data).exec();
+    if (!saved) {
+      return null;
+    }
     return this.findById(saved._id);
   }
 
-  public delete(id: string): Promise<TModel> {
-    return this.mongooseModel.findByIdAndDelete(id).exec();
+  public async delete(id: string): Promise<boolean> {
+    const deleted = await this.mongooseModel.findByIdAndDelete(id).exec();
+    return !!deleted;
   }
 }

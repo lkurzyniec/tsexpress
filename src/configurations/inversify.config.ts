@@ -1,3 +1,8 @@
+import { ResponseLoggerMiddleware } from './../middlewares/response-logger.middleware';
+import { ResponseLogger } from './../loggers/response.logger';
+import { ErrorMiddleware } from '../middlewares/error.middleware';
+import { RequestLoggerMiddleware } from '../middlewares/request-logger.middleware';
+import { RequestLogger } from './../loggers/request.logger';
 import { Container as InversifyContainer, interfaces, ContainerModule } from 'inversify';
 import { AppLogger } from './../loggers/app.logger';
 import { BookModel } from './../models/book.model';
@@ -13,7 +18,7 @@ import { BooksController } from './../controllers/books.controller';
 import { BooksRepository } from './../repositories/books.repository';
 import { DbLogger } from './../loggers/db.logger';
 import { SwaggerConfig } from './swagger.config';
-
+import { BaseMiddleware } from './../middlewares/base.middleware';
 
 // more info: https://github.com/inversify/InversifyJS/tree/master/wiki
 
@@ -29,12 +34,13 @@ export class Container {
     this.container = new InversifyContainer();
 
     this.container.load(this.getLoggersModule());
+    this.container.load(this.getMiddlewaresModule());
     this.container.load(this.getRepositoriesModule());
     this.container.load(this.getControllersModule());
 
     this.container.bind<AppConfig>(AppConfig).toSelf().inSingletonScope();
-    this.container.bind<SwaggerConfig>(SwaggerConfig).toSelf().inSingletonScope();
-    this.container.bind<MongoDbConnector>(MongoDbConnector).toSelf().inSingletonScope();
+    this.container.bind<SwaggerConfig>(SwaggerConfig).toSelf();
+    this.container.bind<MongoDbConnector>(MongoDbConnector).toSelf();
     this.container.bind<App>(App).toSelf();
   }
 
@@ -57,6 +63,16 @@ export class Container {
     return new ContainerModule((bind: interfaces.Bind) => {
       bind<DbLogger>(DbLogger).toSelf();
       bind<AppLogger>(AppLogger).toSelf();
+      bind<RequestLogger>(RequestLogger).toSelf();
+      bind<ResponseLogger>(ResponseLogger).toSelf();
+    });
+  }
+
+  private getMiddlewaresModule(): ContainerModule {
+    return new ContainerModule((bind: interfaces.Bind) => {
+      bind<BaseMiddleware>(BaseMiddleware).to(RequestLoggerMiddleware);
+      bind<ErrorMiddleware>(ErrorMiddleware).toSelf();
+      bind<ResponseLoggerMiddleware>(ResponseLoggerMiddleware).toSelf();
     });
   }
 }

@@ -11,7 +11,7 @@ export class HelloController extends BaseController {
      * @swagger
      * /hello/:
      *    get:
-     *      description: Simple Hello world
+     *      description: Hello world
      *      produces:
      *        - application/json
      *      responses:
@@ -26,7 +26,7 @@ export class HelloController extends BaseController {
      * @swagger
      * /hello/:
      *    post:
-     *      description: Simple Hello world request
+     *      description: Simple request
      *      produces:
      *        - application/json
      *      parameters:

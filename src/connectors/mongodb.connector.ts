@@ -21,10 +21,10 @@ export class MongoDbConnector {
 
     connector.then(
       () => {
-        this.dbLogger.info(`Successfully connected to '${this.appConfig.mongoDatabase}'`);
+        this.dbLogger.info(`Successfully connected to '${this.appConfig.mongoDatabase}'.`);
       },
       err => {
-        this.dbLogger.error(err, `Error while connecting to '${this.appConfig.mongoDatabase}'`);
+        this.dbLogger.error(err, `Error while connecting to '${this.appConfig.mongoDatabase}'.`);
       }
     );
 

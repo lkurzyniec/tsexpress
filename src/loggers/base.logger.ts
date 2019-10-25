@@ -5,7 +5,7 @@ import 'reflect-metadata';
 
 @injectable()
 export abstract class BaseLogger {
-  @inject(AppConfig) private readonly appConfig: AppConfig;
+  @inject(AppConfig) protected readonly appConfig: AppConfig;
 
   public abstract type: string;
 
