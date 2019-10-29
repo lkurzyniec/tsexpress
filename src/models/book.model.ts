@@ -14,10 +14,14 @@ const bookSchema = new Schema({
 }, MongoDbConnector.globalSchemaOptions());
 bookSchema.plugin(autopopulate);
 
-export interface Book {
+export class Book {
   _id: string;
   title: string;
   author: Author;
+
+  constructor(init?: Partial<Author>) {
+    Object.assign(this, init);
+  }
 }
 
 export const BookModel = model<Book & Document>('Book', bookSchema);

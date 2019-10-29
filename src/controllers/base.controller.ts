@@ -1,10 +1,15 @@
+import { Mapper } from './../helpers/mapper.helper';
+import { ValidationHandler } from './../handlers/validation.handler';
 import { isNullOrWhitespace } from './../helpers/string.helper';
 import { DevError } from './../errors/dev.error';
 import { Router } from 'express';
-import { injectable } from 'inversify';
+import { injectable, inject } from 'inversify';
 
 @injectable()
 export abstract class BaseController {
+  @inject(ValidationHandler) protected validator: ValidationHandler;
+  @inject(Mapper) protected mapper: Mapper;
+
   public path: string;
   public router: Router;
 

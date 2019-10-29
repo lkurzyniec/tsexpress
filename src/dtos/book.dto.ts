@@ -6,6 +6,6 @@ export class BookDto {
   public title: string;
 
   @IsString()
-  @IsMongoId()
+  @IsMongoId({ message: `$property has invalid value` })
   public authorId: string;
 }

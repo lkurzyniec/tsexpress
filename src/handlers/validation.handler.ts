@@ -32,7 +32,7 @@ export class ValidationHandler {
       const errors = validationResult(request);
       if (!errors.isEmpty()) {
         //const resultErrors = errors.array().map((item) => `${item.location.toUpperCase()} '${item.param}' ${item.msg}`);
-        next(new ValidationError(ErrorPlace.Url, [`URL param id has invalid value`]));
+        next(new ValidationError(ErrorPlace.Url, [`id URL param has invalid value`]));
       }
       next();
     }

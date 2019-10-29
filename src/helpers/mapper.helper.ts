@@ -4,8 +4,10 @@ import { ClassType } from 'class-transformer/ClassTransformer';
 
 @injectable()
 export class Mapper {
-  public map<TSource, TDestination>(source: TSource, destinationType: ClassType<TDestination>): TDestination {
+  public map<TSource, TDestination>(source: TSource, destinationType: ClassType<TDestination>, afterMapFunc?: (source: TSource, destination: TDestination) => void): TDestination {
     const plain = classToPlain(source);
-    return plainToClass(destinationType, plain);
+    const result = plainToClass(destinationType, plain);
+    afterMapFunc && afterMapFunc(source, result);
+    return result;
   }
 }

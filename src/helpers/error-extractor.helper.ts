@@ -1,5 +1,4 @@
 import { AppConfig } from '../configurations/app.config';
-import { Error as MongooseError } from 'mongoose';
 import { ValidationError } from '../errors/validation.error';
 import { injectable, inject } from 'inversify';
 import { StatusHelper } from './status.helper';
@@ -20,12 +19,7 @@ export class ErrorExtractor {
     let message = 'Something went wrong';
 
     let errors = null;
-    if (error instanceof MongooseError.ValidationError || error instanceof MongooseError.CastError) {
-      status = StatusHelper.status400BadRequest;
-      message = 'Validation error';
-      errors = [error.message];
-    }
-    else if (error instanceof ValidationError) {
+    if (error instanceof ValidationError) {
       status = StatusHelper.status400BadRequest;
       message = `Validation error (${error.place})`;
       errors = error.errors;

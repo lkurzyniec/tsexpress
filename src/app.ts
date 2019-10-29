@@ -33,10 +33,9 @@ export class App {
 
     this.dbConnector.connect();
 
-    this.initializeMiddlewares();
+    this.initializePreMiddlewares();
     this.initializeControllers();
     this.initializePostMiddlewares();
-    this.initializeErrorHandlers();
 
     this.isInitialized = true;
   }
@@ -56,7 +55,7 @@ export class App {
     });
   }
 
-  private initializeMiddlewares(): void {
+  private initializePreMiddlewares(): void {
     this.app.use(jsonBodyParser());
     this.app.use(this.requestLoggerMiddleware.handle.bind(this.requestLoggerMiddleware));
   }
@@ -74,10 +73,7 @@ export class App {
   }
 
   private initializePostMiddlewares(): void {
-    this.app.use(this.responseLoggerMiddleware.handle.bind(this.responseLoggerMiddleware));
-  }
-
-  private initializeErrorHandlers(): void {
     this.app.use(this.errorMiddleware.handle.bind(this.errorMiddleware));
+    this.app.use(this.responseLoggerMiddleware.handle.bind(this.responseLoggerMiddleware));
   }
 }

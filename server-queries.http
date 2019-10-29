@@ -60,21 +60,16 @@ content-type: application/json
 
 {
   "title": "Doctor Sleep",
-  "author": {
-    "_id": "{{author.response.body.$._id}}"
-  }
+  "authorId": "{{author.response.body.$._id}}"
 }
 
 ### UPDATE
 // @name book
-PUT {{apiUrl}}/books/{{book.response.body.$._id}}
+PATCH  {{apiUrl}}/books/{{book.response.body.$._id}}
 content-type: application/json
 
 {
-  "title": "Doctor Sleep {{$randomInt 0 10}}",
-  "author": {
-    "_id": "{{author.response.body.$._id}}"
-  }
+  "title": "Doctor Sleep {{$randomInt 0 100}}"
 }
 
 ### DELETE

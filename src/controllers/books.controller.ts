@@ -1,9 +1,11 @@
+import { BookDto } from './../dtos/book.dto';
 import { Book } from './../models/book.model';
 import { BooksRepository } from './../repositories/books.repository';
 import { injectable, inject } from 'inversify';
 import { BaseController } from './base.controller';
 import { Request, Response, NextFunction } from "express";
 import { StatusHelper } from './../helpers/status.helper';
+import { Author } from './../models/author.model';
 
 @injectable()
 export class BooksController extends BaseController {
@@ -15,10 +17,10 @@ export class BooksController extends BaseController {
 
   public initializeRoutes(): void {
     this.router.get(this.path, this.getAll);
-    this.router.get(`${this.path}/:id`, this.getById);
-    this.router.post(this.path, this.create);
-    this.router.put(`${this.path}/:id`, this.update);
-    this.router.delete(`${this.path}/:id`, this.delete);
+    this.router.get(`${this.path}/:id`, this.validator.checkId(), this.getById);
+    this.router.post(this.path, this.validator.checkBody(BookDto), this.create);
+    this.router.patch(`${this.path}/:id`, this.validator.checkIdAndBody(BookDto, true), this.update);
+    this.router.delete(`${this.path}/:id`, this.validator.checkId(), this.delete);
   }
 
   private getAll = async (_request: Request, response: Response, next: NextFunction) => {
@@ -45,7 +47,10 @@ export class BooksController extends BaseController {
   }
 
   private create = async (request: Request, response: Response, next: NextFunction) => {
-    const data = request.body as Book;
+    const dto = request.body as BookDto;
+    const data = this.mapper.map(dto, Book, (s, d) => {
+      d.author = new Author({ _id: s.authorId });
+    });
     this.repo.create(data)
       .then((book) => {
         response
@@ -59,7 +64,12 @@ export class BooksController extends BaseController {
 
   private update = async (request: Request, response: Response, next: NextFunction) => {
     const id = request.params.id;
-    const data: Book = request.body;
+    const dto = request.body as BookDto;
+    const data = this.mapper.map(dto, Book, (s, d) => {
+      if (s.authorId) {
+        d.author = new Author({ _id: s.authorId });
+      }
+    });
     this.repo.update(id, data)
       .then((book) => {
         if (book) {

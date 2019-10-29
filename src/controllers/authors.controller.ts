@@ -1,6 +1,4 @@
-import { Mapper } from './../helpers/mapper.helper';
 import { AuthorDto } from './../dtos/author.dto';
-import { ValidationHandler } from './../handlers/validation.handler';
 import { Author } from './../models/author.model';
 import { AuthorsRepository } from './../repositories/authors.repository';
 import { injectable, inject } from 'inversify';
@@ -11,8 +9,6 @@ import { StatusHelper } from './../helpers/status.helper';
 @injectable()
 export class AuthorsController extends BaseController {
   @inject(AuthorsRepository) private repo: AuthorsRepository;
-  @inject(ValidationHandler) private validator: ValidationHandler;
-  @inject(Mapper) private mapper: Mapper;
 
   constructor() {
     super('/authors');
