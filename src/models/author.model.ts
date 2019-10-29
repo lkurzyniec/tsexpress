@@ -5,9 +5,9 @@ const authorSchema = new Schema({
   fullName: Schema.Types.String,
 }, MongoDbConnector.globalSchemaOptions());
 
-export interface Author {
+export class Author {
   _id: string;
-  fullName: number;
+  fullName: string;
 }
 
 export const AuthorModel = model<Author & Document>('Author', authorSchema);

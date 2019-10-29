@@ -1,3 +1,6 @@
+import { Mapper } from './../helpers/mapper.helper';
+import { ErrorExtractor } from '../helpers/error-extractor.helper';
+import { ValidationHandler } from './../handlers/validation.handler';
 import { ResponseLoggerMiddleware } from './../middlewares/response-logger.middleware';
 import { ResponseLogger } from './../loggers/response.logger';
 import { ErrorMiddleware } from '../middlewares/error.middleware';
@@ -18,7 +21,6 @@ import { BooksController } from './../controllers/books.controller';
 import { BooksRepository } from './../repositories/books.repository';
 import { DbLogger } from './../loggers/db.logger';
 import { SwaggerConfig } from './swagger.config';
-import { BaseMiddleware } from './../middlewares/base.middleware';
 
 // more info: https://github.com/inversify/InversifyJS/tree/master/wiki
 
@@ -35,12 +37,11 @@ export class Container {
 
     this.container.load(this.getLoggersModule());
     this.container.load(this.getMiddlewaresModule());
+    this.container.load(this.getGeneralModule());
     this.container.load(this.getRepositoriesModule());
     this.container.load(this.getControllersModule());
+    this.container.load(this.getHelpersModule());
 
-    this.container.bind<AppConfig>(AppConfig).toSelf().inSingletonScope();
-    this.container.bind<SwaggerConfig>(SwaggerConfig).toSelf();
-    this.container.bind<MongoDbConnector>(MongoDbConnector).toSelf();
     this.container.bind<App>(App).toSelf();
   }
 
@@ -70,9 +71,25 @@ export class Container {
 
   private getMiddlewaresModule(): ContainerModule {
     return new ContainerModule((bind: interfaces.Bind) => {
-      bind<BaseMiddleware>(BaseMiddleware).to(RequestLoggerMiddleware);
+      bind<RequestLoggerMiddleware>(RequestLoggerMiddleware).toSelf();
       bind<ErrorMiddleware>(ErrorMiddleware).toSelf();
       bind<ResponseLoggerMiddleware>(ResponseLoggerMiddleware).toSelf();
+    });
+  }
+
+  private getGeneralModule(): ContainerModule {
+    return new ContainerModule((bind: interfaces.Bind) => {
+      this.container.bind<AppConfig>(AppConfig).toSelf().inSingletonScope();
+      this.container.bind<SwaggerConfig>(SwaggerConfig).toSelf();
+      this.container.bind<MongoDbConnector>(MongoDbConnector).toSelf();
+      this.container.bind<ValidationHandler>(ValidationHandler).toSelf();
+    });
+  }
+
+  private getHelpersModule(): ContainerModule {
+    return new ContainerModule((bind: interfaces.Bind) => {
+      this.container.bind<ErrorExtractor>(ErrorExtractor).toSelf();
+      this.container.bind<Mapper>(Mapper).toSelf();
     });
   }
 }

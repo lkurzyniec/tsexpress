@@ -1,3 +1,6 @@
+import { Mapper } from './../helpers/mapper.helper';
+import { AuthorDto } from './../dtos/author.dto';
+import { ValidationHandler } from './../handlers/validation.handler';
 import { Author } from './../models/author.model';
 import { AuthorsRepository } from './../repositories/authors.repository';
 import { injectable, inject } from 'inversify';
@@ -8,6 +11,8 @@ import { StatusHelper } from './../helpers/status.helper';
 @injectable()
 export class AuthorsController extends BaseController {
   @inject(AuthorsRepository) private repo: AuthorsRepository;
+  @inject(ValidationHandler) private validator: ValidationHandler;
+  @inject(Mapper) private mapper: Mapper;
 
   constructor() {
     super('/authors');
@@ -15,10 +20,10 @@ export class AuthorsController extends BaseController {
 
   public initializeRoutes(): void {
     this.router.get(this.path, this.getAll);
-    this.router.get(`${this.path}/:id`, this.getById);
-    this.router.post(this.path, this.create);
-    this.router.put(`${this.path}/:id`, this.update);
-    this.router.delete(`${this.path}/:id`, this.delete);
+    this.router.get(`${this.path}/:id`, this.validator.checkId(), this.getById);
+    this.router.post(this.path, this.validator.checkBody(AuthorDto), this.create);
+    this.router.put(`${this.path}/:id`, this.validator.checkIdAndBody(AuthorDto), this.update);
+    this.router.delete(`${this.path}/:id`, this.validator.checkId(), this.delete);
   }
 
   private getAll = async (_request: Request, response: Response, next: NextFunction) => {
@@ -45,7 +50,8 @@ export class AuthorsController extends BaseController {
   }
 
   private create = async (request: Request, response: Response, next: NextFunction) => {
-    const data = request.body as Author;
+    const dto = request.body as AuthorDto;
+    const data = this.mapper.map(dto, Author);
     this.repo.create(data)
       .then((author) => {
         response
@@ -59,7 +65,8 @@ export class AuthorsController extends BaseController {
 
   private update = async (request: Request, response: Response, next: NextFunction) => {
     const id = request.params.id;
-    const data: Author = request.body;
+    const dto = request.body as AuthorDto;
+    const data = this.mapper.map(dto, Author);
     this.repo.update(id, data)
       .then((author) => {
         if (author) {

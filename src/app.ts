@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+import { RequestLoggerMiddleware } from './middlewares/request-logger.middleware';
 import { ResponseLoggerMiddleware } from './middlewares/response-logger.middleware';
 import { AppLogger } from './loggers/app.logger';
 import { MongoDbConnector } from './connectors/mongodb.connector';
@@ -10,7 +12,6 @@ import { json as jsonBodyParser } from 'body-parser';
 import * as express from 'express';
 import { injectable, inject, multiInject } from 'inversify';
 import { AddressInfo } from 'net';
-import { BaseMiddleware } from './middlewares/base.middleware';
 
 @injectable()
 export class App {
@@ -20,11 +21,11 @@ export class App {
 
   @inject(AppConfig) private readonly appConfig: AppConfig;
   @multiInject(BaseController) private controllers: BaseController[];
-  @multiInject(BaseMiddleware) private middlewares: BaseMiddleware[];
   @inject(MongoDbConnector) private readonly dbConnector: MongoDbConnector;
   @inject(SwaggerConfig) private readonly swaggerConfig: SwaggerConfig;
   @inject(AppLogger) private readonly appLogger: AppLogger;
   @inject(ErrorMiddleware) private readonly errorMiddleware: ErrorMiddleware;
+  @inject(RequestLoggerMiddleware) private readonly requestLoggerMiddleware: RequestLoggerMiddleware;
   @inject(ResponseLoggerMiddleware) private readonly responseLoggerMiddleware: ResponseLoggerMiddleware;
 
   public initialize(process: NodeJS.Process): void {
@@ -57,11 +58,7 @@ export class App {
 
   private initializeMiddlewares(): void {
     this.app.use(jsonBodyParser());
-
-    this.middlewares.sort((a, b) => { return a.order - b.order; });
-    this.middlewares.forEach((middleware: BaseMiddleware) => {
-      this.app.use(middleware.handle.bind(middleware));
-    });
+    this.app.use(this.requestLoggerMiddleware.handle.bind(this.requestLoggerMiddleware));
   }
 
   private initializeControllers(): void {
@@ -81,6 +78,6 @@ export class App {
   }
 
   private initializeErrorHandlers(): void {
-    this.app.use(this.errorMiddleware.handle);
+    this.app.use(this.errorMiddleware.handle.bind(this.errorMiddleware));
   }
 }

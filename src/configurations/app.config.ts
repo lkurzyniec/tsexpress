@@ -1,7 +1,6 @@
 import { DevError } from './../errors/dev.error';
 import { cleanEnv, str, port, host, bool } from 'envalid';
 import { injectable } from 'inversify';
-import 'reflect-metadata';
 import { isNullOrWhitespace } from './../helpers/string.helper';
 
 @injectable()

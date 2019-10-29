@@ -1,7 +1,6 @@
 import { AppConfig } from './../configurations/app.config';
 import { isNullOrWhitespace } from "./../helpers/string.helper";
 import { injectable, inject } from "inversify";
-import 'reflect-metadata';
 
 @injectable()
 export abstract class BaseLogger {

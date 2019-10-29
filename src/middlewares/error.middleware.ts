@@ -1,24 +1,18 @@
+import { ErrorExtractor } from '../helpers/error-extractor.helper';
 import { NextFunction, Request, Response } from 'express';
-import { Error } from 'mongoose';
-import { injectable } from 'inversify';
-import 'reflect-metadata'
-import { StatusHelper } from './../helpers/status.helper';
+import { injectable, inject } from 'inversify';
 
 @injectable()
 export class ErrorMiddleware {
-  public handle(error: any, request: Request, response: Response, next: NextFunction): void {
-    var status = StatusHelper.status500InternalServerError;
-    var message = 'Something went wrong';
+  @inject(ErrorExtractor) private errorHelper: ErrorExtractor;
 
-    if (error instanceof Error.ValidationError || error instanceof Error.CastError) {
-      status = StatusHelper.status400BadRequest;
-      message = error.message;
-    }
+  public handle(error: any, request: Request, response: Response, next: NextFunction): void {
+    const result = this.errorHelper.extract(error);
 
     response
-      .status(status)
+      .status(result.status)
       .send({
-        message,
+        ...result
       });
   }
 }

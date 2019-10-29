@@ -1,7 +1,6 @@
 import { BaseLogger } from "./base.logger";
 import { Request } from 'express';
 import { injectable } from "inversify";
-import 'reflect-metadata';
 
 @injectable()
 export class RequestLogger extends BaseLogger {

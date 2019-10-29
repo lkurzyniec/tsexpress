@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { Container } from './configurations/inversify.config';
 
 const container = new Container();

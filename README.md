@@ -2,7 +2,7 @@
 
 Source code based on [TypeScript Express tutorial](https://wanago.io/courses/typescript-express-tutorial/).
 
-## Repo (should) contains
+## Repository contains
 
 * NodeJS
 * Express

@@ -12,7 +12,7 @@ export class MongoDbConnector {
   public connect(): void {
     const connectionOptions = { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false };
 
-    var connector;
+    let connector;
     if (isNullOrWhitespace(this.appConfig.mongoUser) && isNullOrWhitespace(this.appConfig.mongoPassword)) {
       connector = mongoose.connect(`mongodb://${this.appConfig.mongoHost}:${this.appConfig.mongoPort}/${this.appConfig.mongoDatabase}`, connectionOptions);
     } else {

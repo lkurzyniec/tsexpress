@@ -2,7 +2,6 @@ import { isNullOrWhitespace } from './../helpers/string.helper';
 import { DevError } from './../errors/dev.error';
 import { Router } from 'express';
 import { injectable } from 'inversify';
-import 'reflect-metadata'
 
 @injectable()
 export abstract class BaseController {
