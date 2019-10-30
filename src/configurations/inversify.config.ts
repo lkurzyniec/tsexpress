@@ -1,3 +1,7 @@
+import { AuthService } from './../services/auth.service';
+import { UserModel } from './../models/user.model';
+import { UsersRepository } from './../repositories/users.repository';
+import { AuthController } from './../controllers/auth.controller';
 import { Mapper } from './../helpers/mapper.helper';
 import { ErrorExtractor } from '../helpers/error-extractor.helper';
 import { ValidationHandler } from './../handlers/validation.handler';
@@ -41,6 +45,7 @@ export class Container {
     this.container.load(this.getRepositoriesModule());
     this.container.load(this.getControllersModule());
     this.container.load(this.getHelpersModule());
+    this.container.load(this.getServicesModule());
 
     this.container.bind<App>(App).toSelf();
   }
@@ -50,6 +55,7 @@ export class Container {
       bind<BaseController>(BaseController).to(BooksController);
       bind<BaseController>(BaseController).to(HelloController);
       bind<BaseController>(BaseController).to(AuthorsController);
+      bind<BaseController>(BaseController).to(AuthController);
     });
   }
 
@@ -57,6 +63,7 @@ export class Container {
     return new ContainerModule((bind: interfaces.Bind) => {
       bind<AuthorsRepository>(AuthorsRepository).toConstantValue(new AuthorsRepository(AuthorModel));
       bind<BooksRepository>(BooksRepository).toConstantValue(new BooksRepository(BookModel));
+      bind<UsersRepository>(UsersRepository).toConstantValue(new UsersRepository(UserModel));
     });
   }
 
@@ -79,17 +86,23 @@ export class Container {
 
   private getGeneralModule(): ContainerModule {
     return new ContainerModule((bind: interfaces.Bind) => {
-      this.container.bind<AppConfig>(AppConfig).toSelf().inSingletonScope();
-      this.container.bind<SwaggerConfig>(SwaggerConfig).toSelf();
-      this.container.bind<MongoDbConnector>(MongoDbConnector).toSelf();
-      this.container.bind<ValidationHandler>(ValidationHandler).toSelf();
+      bind<AppConfig>(AppConfig).toSelf().inSingletonScope();
+      bind<SwaggerConfig>(SwaggerConfig).toSelf();
+      bind<MongoDbConnector>(MongoDbConnector).toSelf();
+      bind<ValidationHandler>(ValidationHandler).toSelf();
     });
   }
 
   private getHelpersModule(): ContainerModule {
     return new ContainerModule((bind: interfaces.Bind) => {
-      this.container.bind<ErrorExtractor>(ErrorExtractor).toSelf();
-      this.container.bind<Mapper>(Mapper).toSelf();
+      bind<ErrorExtractor>(ErrorExtractor).toSelf();
+      bind<Mapper>(Mapper).toSelf();
+    });
+  }
+
+  private getServicesModule(): ContainerModule {
+    return new ContainerModule((bind: interfaces.Bind) => {
+      bind<AuthService>(AuthService).toSelf();
     });
   }
 }

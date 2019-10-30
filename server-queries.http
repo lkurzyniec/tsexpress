@@ -74,3 +74,24 @@ content-type: application/json
 
 ### DELETE
 DELETE {{apiUrl}}/books/{{book.response.body.$._id}}
+
+# ================= BOOKS ======================= #
+
+### LOGIN
+POST {{apiUrl}}/auth/login
+content-type: application/json
+
+{
+  "email": "test@test.pl",
+  "password": "wiezA123"
+}
+
+### REGISTER
+POST {{apiUrl}}/auth/register
+content-type: application/json
+
+{
+  "name": "Łukasz K.",
+  "email": "sample.email@address.pl",
+  "password": "wiezA123"
+}

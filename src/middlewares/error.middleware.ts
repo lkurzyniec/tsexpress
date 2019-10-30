@@ -14,5 +14,6 @@ export class ErrorMiddleware {
       .send({
         ...result
       });
+    next();
   }
 }

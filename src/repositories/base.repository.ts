@@ -11,6 +11,14 @@ export abstract class BaseRepository<TModel>{
     return this.mongooseModel.findById(id).exec();
   }
 
+  public findOne(conditions: Partial<TModel>): Promise<TModel> {
+    return this.mongooseModel.findOne(conditions).exec();
+  }
+
+  public exists(conditions: Partial<TModel>): Promise<boolean> {
+    return this.mongooseModel.exists(conditions);
+  }
+
   public getAll(): Promise<TModel[]> {
     return this.mongooseModel.find().exec();
   }

@@ -12,6 +12,7 @@ Source code based on [TypeScript Express tutorial](https://wanago.io/courses/typ
 * MongoDB with mongoose
 * dotenv and envalid
 * Swagger and SwaggerUI
+* express-validator, class-transformer, class-validator
 
 ## Start
 
