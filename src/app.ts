@@ -10,6 +10,7 @@ import { ErrorMiddleware } from './middlewares/error.middleware';
 import { SwaggerConfig } from './configurations/swagger.config';
 import { json as jsonBodyParser } from 'body-parser';
 import * as express from 'express';
+import * as helmet from 'helmet';
 import { injectable, inject, multiInject } from 'inversify';
 import { AddressInfo } from 'net';
 
@@ -56,6 +57,7 @@ export class App {
   }
 
   private initializePreMiddlewares(): void {
+    this.app.use(helmet());
     this.app.use(jsonBodyParser());
     this.app.use(this.requestLoggerMiddleware.handle.bind(this.requestLoggerMiddleware));
   }

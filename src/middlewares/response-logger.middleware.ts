@@ -7,7 +7,7 @@ export class ResponseLoggerMiddleware {
   @inject(ResponseLogger) private readonly responseLogger: ResponseLogger;
 
   public handle(request: Request, response: Response, next): void {
-    this.responseLogger.log(response);
+    this.responseLogger.log(request, response);
     next();
   }
 }

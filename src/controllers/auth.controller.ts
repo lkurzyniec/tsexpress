@@ -1,17 +1,15 @@
-import { ValidationError } from './../errors/validation.error';
+import { ValidationError, ValidationErrorPlace } from './../errors/validation.error';
 import { AuthService, RegisterResult } from './../services/auth.service';
-import { RegisterDto } from './../dtos/register.dto';
-import { LoginDto } from './../dtos/login.dto';
-import { UsersRepository } from './../repositories/users.repository';
+import { RegisterRequestDto } from '../dtos/auth/register.request.dto';
+import { LoginRequestDto } from '../dtos/auth/login.request.dto';
 import { injectable, inject } from 'inversify';
 import { BaseController } from './base.controller';
 import { Request, Response, NextFunction } from "express";
 import { StatusHelper } from '../helpers/status.helper';
-import { compare } from 'bcrypt';
+
 
 @injectable()
 export class AuthController extends BaseController {
-  @inject(UsersRepository) private repo: UsersRepository;
   @inject(AuthService) private auth: AuthService;
 
   constructor() {
@@ -19,20 +17,18 @@ export class AuthController extends BaseController {
   }
 
   public initializeRoutes(): void {
-    this.router.post(`${this.path}/login`, this.validator.checkBody(LoginDto), this.login);
-    this.router.post(`${this.path}/register`, this.validator.checkBody(RegisterDto), this.register);
+    this.router.post(`${this.path}/login`, this.validator.checkBody(LoginRequestDto), this.login);
+    this.router.post(`${this.path}/register`, this.validator.checkBody(RegisterRequestDto), this.register);
   }
 
   private login = async (request: Request, response: Response, next: NextFunction) => {
-    const dto = request.body as LoginDto;
-    const user = await this.repo.findOne({ email: dto.email });
-    if (user) {
-      const isPasswordMatch = await compare(dto.password, user.password);
-      if (isPasswordMatch) {
-        response.sendStatus(StatusHelper.status204NoContent);
-        next();
-        return;
-      }
+    const dto = request.body as LoginRequestDto;
+    const loginResult = await this.auth.login(dto);
+    if (loginResult) {
+      response.setHeader('Set-Cookie', `Authorization=${loginResult.tokenInfo.token}; HttpOnly; Max-Age=${loginResult.tokenInfo.expiresIn}`);
+      response.send(loginResult.user);
+      next();
+      return;
     }
 
     response.sendStatus(StatusHelper.status401Unauthorized);
@@ -40,7 +36,7 @@ export class AuthController extends BaseController {
   }
 
   private register = async (request: Request, response: Response, next: NextFunction) => {
-    const dto = request.body as RegisterDto;
+    const dto = request.body as RegisterRequestDto;
     const result = await this.auth.register(dto);
     if (result === RegisterResult.Success) {
       response.sendStatus(StatusHelper.status204NoContent);
@@ -48,6 +44,6 @@ export class AuthController extends BaseController {
       return;
     }
 
-    next(new ValidationError('BODY', [result]));
+    next(new ValidationError(ValidationErrorPlace.Body, [result]));
   }
 }

@@ -1,8 +1,9 @@
+import { SecretsProvider } from './../token/secrets.provider';
+import { TokenService } from './../token/token.service';
 import { AuthService } from './../services/auth.service';
 import { UserModel } from './../models/user.model';
 import { UsersRepository } from './../repositories/users.repository';
 import { AuthController } from './../controllers/auth.controller';
-import { Mapper } from './../helpers/mapper.helper';
 import { ErrorExtractor } from '../helpers/error-extractor.helper';
 import { ValidationHandler } from './../handlers/validation.handler';
 import { ResponseLoggerMiddleware } from './../middlewares/response-logger.middleware';
@@ -96,13 +97,14 @@ export class Container {
   private getHelpersModule(): ContainerModule {
     return new ContainerModule((bind: interfaces.Bind) => {
       bind<ErrorExtractor>(ErrorExtractor).toSelf();
-      bind<Mapper>(Mapper).toSelf();
+      bind<SecretsProvider>(SecretsProvider).toSelf().inSingletonScope();
     });
   }
 
   private getServicesModule(): ContainerModule {
     return new ContainerModule((bind: interfaces.Bind) => {
       bind<AuthService>(AuthService).toSelf();
+      bind<TokenService>(TokenService).toSelf();
     });
   }
 }

@@ -19,7 +19,7 @@ export class Book {
   title: string;
   author: Author;
 
-  constructor(init?: Partial<Author>) {
+  constructor(init?: Partial<Book>) {
     Object.assign(this, init);
   }
 }

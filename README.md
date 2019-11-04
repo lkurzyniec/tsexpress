@@ -13,6 +13,7 @@ Source code based on [TypeScript Express tutorial](https://wanago.io/courses/typ
 * dotenv and envalid
 * Swagger and SwaggerUI
 * express-validator, class-transformer, class-validator
+* bcrypt and jsonwebtoken
 
 ## Start
 
@@ -23,6 +24,8 @@ Create volume to persist data.
 ```docker
 docker volume create --name=mongodata
 ```
+
+Run container.
 
 ```docker
 docker run --name mongodb -v mongodata:/data/db -d -p 27017:27017 mongo:latest
@@ -40,6 +43,7 @@ MONGO_PORT=27017
 MONGO_DATABASE=libraryDB
 APPLICATION_PORT=5000
 DEBUG=true
+TOKEN_EXPIRATION_IN_MIN=15
 ```
 
 ### Start the application

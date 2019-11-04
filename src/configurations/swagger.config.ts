@@ -23,7 +23,10 @@ export class SwaggerConfig {
         host: `${this.appConfig.applicationHost}:${this.appConfig.applicationPort}`,
         basePath: baseApiPath
       },
-      apis: ['./src/controllers/*.controller.ts', './src/models/*.model.ts']
+      apis: [
+        `${this.appConfig.sourcePath}/controllers/*.controller.ts`,
+        `${this.appConfig.sourcePath}/dtos/**/*.dto.ts`,
+      ]
     }
 
     const swaggerSpec = swaggerJSDoc(options);

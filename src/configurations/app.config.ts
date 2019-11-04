@@ -1,10 +1,12 @@
 import { DevError } from './../errors/dev.error';
-import { cleanEnv, str, port, host, bool } from 'envalid';
+import { cleanEnv, str, port, host, bool, num } from 'envalid';
 import { injectable } from 'inversify';
 import { isNullOrWhitespace } from './../helpers/string.helper';
 
 @injectable()
 export class AppConfig {
+  public readonly sourcePath: string = './src';
+
   private _mongoUser: string;
   public get mongoUser(): string {
     return this._mongoUser;
@@ -35,8 +37,8 @@ export class AppConfig {
     return this._applicationPort;
   }
 
-  private _applicationHost : string;
-  public get applicationHost() : string {
+  private _applicationHost: string;
+  public get applicationHost(): string {
     return this._applicationHost;
   }
 
@@ -45,7 +47,12 @@ export class AppConfig {
     return this._debug;
   }
 
-  public setApplicationHost(host : string) {
+  private _tokenExpirationInMin: number;
+  public get tokenExpirationInMin(): number {
+    return this._tokenExpirationInMin;
+  }
+
+  public setApplicationHost(host: string) {
     if (!isNullOrWhitespace(this._applicationHost)) {
       throw new DevError(`Variable 'applicationHost' already set-up: '${this._applicationHost}'`);
     }
@@ -54,13 +61,14 @@ export class AppConfig {
 
   public initialize(processEnv: NodeJS.ProcessEnv) {
     const env = cleanEnv(processEnv, {
-      MONGO_USER: str(),
-      MONGO_PASSWORD: str(),
-      MONGO_HOST: host({ devDefault: 'localhost' }),
+      MONGO_USER: str({ example: 'lkurzyniec' }),
+      MONGO_PASSWORD: str({ example: 'someSTRONGpwd123' }),
+      MONGO_HOST: host({ devDefault: 'localhost', example: 'mongodb0.example.com' }),
       MONGO_PORT: port({ default: 27017 }),
-      MONGO_DATABASE: str(),
+      MONGO_DATABASE: str({ default: 'libraryDB' }),
       APPLICATION_PORT: port({ devDefault: 5000, desc: 'Port number on which the Application will run' }),
       DEBUG: bool({ default: false, devDefault: true }),
+      TOKEN_EXPIRATION_IN_MIN: num({ default: 15, devDefault: 60 }),
     });
 
     this._mongoUser = env.MONGO_USER;
@@ -70,5 +78,6 @@ export class AppConfig {
     this._mongoDatabase = env.MONGO_DATABASE;
     this._applicationPort = env.APPLICATION_PORT;
     this._debug = env.DEBUG;
+    this._tokenExpirationInMin = env.TOKEN_EXPIRATION_IN_MIN;
   }
 }

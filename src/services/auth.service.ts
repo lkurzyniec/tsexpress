@@ -1,9 +1,11 @@
-import { User } from './../models/user.model';
-import { Mapper } from './../helpers/mapper.helper';
+import { UserResponseDto } from './../dtos/auth/user.response.dto';
+import { LoginResult } from './../token/token';
+import { TokenService } from './../token/token.service';
+import { LoginRequestDto } from '../dtos/auth/login.request.dto';
 import { UsersRepository } from './../repositories/users.repository';
-import { RegisterDto } from './../dtos/register.dto';
+import { RegisterRequestDto } from '../dtos/auth/register.request.dto';
 import { injectable, inject } from 'inversify';
-import { hash } from 'bcrypt';
+import { hash, compare } from 'bcrypt';
 
 export enum RegisterResult {
   Success = 'Success',
@@ -13,19 +15,33 @@ export enum RegisterResult {
 @injectable()
 export class AuthService {
   @inject(UsersRepository) private repo: UsersRepository;
-  @inject(Mapper) protected mapper: Mapper;
+  @inject(TokenService) private tokenService: TokenService;
 
-  public async register(dto: RegisterDto): Promise<RegisterResult> {
+  public async register(dto: RegisterRequestDto): Promise<RegisterResult> {
     const isEmailTaken = await this.repo.exists({ email: dto.email });
     if (isEmailTaken) {
       return RegisterResult.EmailTaken;
     }
 
-    const hashedPassword = await hash(dto.password, 10);
-    const data = this.mapper.map(dto, User, (s, d) => {
-      d.password = hashedPassword;
-    });
+    const data = dto.toModel();
+    data.password = await hash(dto.password, 10);
     await this.repo.create(data);
     return RegisterResult.Success;
+  }
+
+  public async login(dto: LoginRequestDto): Promise<LoginResult> {
+    const user = await this.repo.findOne({ email: dto.email });
+    if (user) {
+      const isPasswordMatch = await compare(dto.password, user.password);
+      if (isPasswordMatch) {
+        const token = this.tokenService.createToken(user);
+        const userDto = UserResponseDto.fromModel(user);
+        return {
+          tokenInfo: token,
+          user: userDto,
+        }
+      }
+    }
+    return null;
   }
 }

@@ -1,5 +1,7 @@
 @apiUrl = http://localhost:5000/api
 
+# ================= HELLO ======================= #
+
 ### Hello
 GET {{apiUrl}}/hello
 
@@ -20,7 +22,7 @@ GET {{apiUrl}}/authors
 
 ### GET one
 // @name author
-GET {{apiUrl}}/authors/{{authors.response.body.$.[0]._id}}
+GET {{apiUrl}}/authors/{{authors.response.body.$.[0].id}}
 
 ### CREATE
 // @name author
@@ -33,7 +35,7 @@ content-type: application/json
 
 ### UPDATE
 // @name author
-PUT {{apiUrl}}/authors/{{author.response.body.$._id}}
+PUT {{apiUrl}}/authors/{{author.response.body.$.id}}
 content-type: application/json
 
 {
@@ -41,7 +43,7 @@ content-type: application/json
 }
 
 ### DELETE
-DELETE {{apiUrl}}/authors/{{author.response.body.$._id}}
+DELETE {{apiUrl}}/authors/{{author.response.body.$.id}}
 
 # ================= BOOKS ======================= #
 
@@ -51,7 +53,7 @@ GET {{apiUrl}}/books
 
 ### GET one
 // @name book
-GET {{apiUrl}}/books/{{books.response.body.$.[0]._id}}
+GET {{apiUrl}}/books/{{books.response.body.$.[0].id}}
 
 ### CREATE
 // @name book
@@ -60,12 +62,12 @@ content-type: application/json
 
 {
   "title": "Doctor Sleep",
-  "authorId": "{{author.response.body.$._id}}"
+  "authorId": "{{author.response.body.$.id}}"
 }
 
 ### UPDATE
 // @name book
-PATCH  {{apiUrl}}/books/{{book.response.body.$._id}}
+PATCH  {{apiUrl}}/books/{{book.response.body.$.id}}
 content-type: application/json
 
 {
@@ -73,9 +75,9 @@ content-type: application/json
 }
 
 ### DELETE
-DELETE {{apiUrl}}/books/{{book.response.body.$._id}}
+DELETE {{apiUrl}}/books/{{book.response.body.$.id}}
 
-# ================= BOOKS ======================= #
+# ================= AUTH ======================= #
 
 ### LOGIN
 POST {{apiUrl}}/auth/login
