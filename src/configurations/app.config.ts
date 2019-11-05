@@ -61,8 +61,8 @@ export class AppConfig {
 
   public initialize(processEnv: NodeJS.ProcessEnv) {
     const env = cleanEnv(processEnv, {
-      MONGO_USER: str({ example: 'lkurzyniec' }),
-      MONGO_PASSWORD: str({ example: 'someSTRONGpwd123' }),
+      MONGO_USER: str({ example: 'lkurzyniec', devDefault: '' }),
+      MONGO_PASSWORD: str({ example: 'someSTRONGpwd123', devDefault: '' }),
       MONGO_HOST: host({ devDefault: 'localhost', example: 'mongodb0.example.com' }),
       MONGO_PORT: port({ default: 27017 }),
       MONGO_DATABASE: str({ default: 'libraryDB' }),

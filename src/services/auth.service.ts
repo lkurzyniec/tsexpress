@@ -1,6 +1,6 @@
 import { UserResponseDto } from './../dtos/auth/user.response.dto';
 import { LoginResult } from './../token/token';
-import { TokenService } from './../token/token.service';
+import { TokenService } from './token.service';
 import { LoginRequestDto } from '../dtos/auth/login.request.dto';
 import { UsersRepository } from './../repositories/users.repository';
 import { RegisterRequestDto } from '../dtos/auth/register.request.dto';

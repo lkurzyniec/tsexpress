@@ -1,5 +1,7 @@
+import { BooksService } from '../services/books.service';
+import { AuthorsService } from './../services/authors.service';
 import { SecretsProvider } from './../token/secrets.provider';
-import { TokenService } from './../token/token.service';
+import { TokenService } from '../services/token.service';
 import { AuthService } from './../services/auth.service';
 import { UserModel } from './../models/user.model';
 import { UsersRepository } from './../repositories/users.repository';
@@ -105,6 +107,8 @@ export class Container {
     return new ContainerModule((bind: interfaces.Bind) => {
       bind<AuthService>(AuthService).toSelf();
       bind<TokenService>(TokenService).toSelf();
+      bind<AuthorsService>(AuthorsService).toSelf();
+      bind<BooksService>(BooksService).toSelf();
     });
   }
 }

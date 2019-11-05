@@ -11,18 +11,6 @@ export class BookRequestDto {
   @IsString()
   @IsMongoId({ message: `$property has invalid value` })
   public authorId: string;
-
-  public toModel(): Book {
-    const result = new Book({
-      title: this.title,
-    });
-    if (this.authorId) {
-      result.author = new Author({
-        _id: this.authorId,
-      });
-    }
-    return result;
-  };
 }
 
 export class BookResponseDto {
@@ -33,16 +21,5 @@ export class BookResponseDto {
 
   constructor(init?: Partial<BookResponseDto>) {
     Object.assign(this, init);
-  }
-
-  public static fromModel(model: Book): BookResponseDto {
-    return new this({
-      id: model._id,
-      title: model.title,
-      author: new AuthorResponseDto({
-        id: model.author._id,
-        fullName: model.author.fullName,
-      }),
-    });
   }
 }

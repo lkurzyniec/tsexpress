@@ -1,6 +1,5 @@
-import { AuthorRequestDto, AuthorResponseDto } from '../dtos/author/author.dto';
-import { Author } from './../models/author.model';
-import { AuthorsRepository } from './../repositories/authors.repository';
+import { AuthorsService } from './../services/authors.service';
+import { AuthorRequestDto } from '../dtos/author/author.dto';
 import { injectable, inject } from 'inversify';
 import { BaseController } from './base.controller';
 import { Request, Response, NextFunction } from "express";
@@ -8,7 +7,7 @@ import { StatusHelper } from './../helpers/status.helper';
 
 @injectable()
 export class AuthorsController extends BaseController {
-  @inject(AuthorsRepository) private repo: AuthorsRepository;
+  @inject(AuthorsService) private service: AuthorsService;
 
   constructor() {
     super('/authors');
@@ -23,10 +22,9 @@ export class AuthorsController extends BaseController {
   }
 
   private getAll = async (request: Request, response: Response, next: NextFunction) => {
-    this.repo.getAll()
+    this.service.getAll()
       .then((authors) => {
-        const result = authors.map((item) => AuthorResponseDto.fromModel(item));
-        response.send(result);
+        response.send(authors);
         next();
       })
       .catch(next);
@@ -34,11 +32,10 @@ export class AuthorsController extends BaseController {
 
   private getById = async (request: Request, response: Response, next: NextFunction) => {
     const id = request.params.id;
-    this.repo.findById(id)
+    this.service.findById(id)
       .then((author) => {
         if (author) {
-          const result = AuthorResponseDto.fromModel(author);
-          response.send(result);
+          response.send(author);
         } else {
           response.sendStatus(StatusHelper.status404NotFound);
         }
@@ -49,14 +46,12 @@ export class AuthorsController extends BaseController {
 
   private create = async (request: Request, response: Response, next: NextFunction) => {
     const dto = request.body as AuthorRequestDto;
-    const data = dto.toModel();
-    this.repo.create(data)
+    this.service.create(dto)
       .then((author) => {
-        const result = AuthorResponseDto.fromModel(author);
         response
-          .location(`${this.path}/${result.id}`)
+          .location(`${this.path}/${author.id}`)
           .status(StatusHelper.status201Created)
-          .send(result);
+          .send(author);
         next();
       })
       .catch(next);
@@ -65,12 +60,10 @@ export class AuthorsController extends BaseController {
   private update = async (request: Request, response: Response, next: NextFunction) => {
     const id = request.params.id;
     const dto = request.body as AuthorRequestDto;
-    const data = dto.toModel();
-    this.repo.update(id, data)
+    this.service.update(id, dto)
       .then((author) => {
         if (author) {
-          const result = AuthorResponseDto.fromModel(author);
-          response.send(result);
+          response.send(author);
         } else {
           response.sendStatus(StatusHelper.status404NotFound);
         }
@@ -81,7 +74,7 @@ export class AuthorsController extends BaseController {
 
   private delete = async (request: Request, response: Response, next: NextFunction) => {
     const id = request.params.id;
-    this.repo.delete(id)
+    this.service.delete(id)
       .then((deleted) => {
         if (deleted) {
           response.sendStatus(StatusHelper.status204NoContent);

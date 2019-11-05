@@ -1,7 +1,7 @@
-import { SecretsProvider } from './secrets.provider';
+import { SecretsProvider } from '../token/secrets.provider';
 import { User } from '../models/user.model';
 import { AppConfig } from '../configurations/app.config';
-import { TokenInfo, TokenData } from './token';
+import { TokenInfo, TokenData } from '../token/token';
 import { injectable, inject } from 'inversify';
 import * as jwt from 'jsonwebtoken';
 

@@ -1,15 +1,13 @@
-import { BookResponseDto, BookRequestDto } from './../dtos/book/book.dto';
-import { Book } from './../models/book.model';
-import { BooksRepository } from './../repositories/books.repository';
+import { BookRequestDto } from './../dtos/book/book.dto';
+import { BooksService } from './../services/books.service';
 import { injectable, inject } from 'inversify';
 import { BaseController } from './base.controller';
 import { Request, Response, NextFunction } from "express";
 import { StatusHelper } from './../helpers/status.helper';
-import { Author } from './../models/author.model';
 
 @injectable()
 export class BooksController extends BaseController {
-  @inject(BooksRepository) private repo: BooksRepository;
+  @inject(BooksService) private service: BooksService;
 
   constructor() {
     super('/books');
@@ -24,10 +22,9 @@ export class BooksController extends BaseController {
   }
 
   private getAll = async (request: Request, response: Response, next: NextFunction) => {
-    this.repo.getAll()
+    this.service.getAll()
       .then((books) => {
-        const result = books.map((item) => BookResponseDto.fromModel(item));
-        response.send(result);
+        response.send(books);
         next();
       })
       .catch(next);
@@ -35,11 +32,10 @@ export class BooksController extends BaseController {
 
   private getById = async (request: Request, response: Response, next: NextFunction) => {
     const id = request.params.id;
-    this.repo.findById(id)
+    this.service.findById(id)
       .then((book) => {
         if (book) {
-          const result = BookResponseDto.fromModel(book);
-          response.send(result);
+          response.send(book);
         } else {
           response.sendStatus(StatusHelper.status404NotFound);
         }
@@ -50,14 +46,12 @@ export class BooksController extends BaseController {
 
   private create = async (request: Request, response: Response, next: NextFunction) => {
     const dto = request.body as BookRequestDto;
-    const data = dto.toModel();
-    this.repo.create(data)
+    this.service.create(dto)
       .then((book) => {
-        const result = BookResponseDto.fromModel(book);
         response
-          .location(`${this.path}/${result.id}`)
+          .location(`${this.path}/${book.id}`)
           .status(StatusHelper.status201Created)
-          .send(result);
+          .send(book);
         next();
       })
       .catch(next);
@@ -66,12 +60,10 @@ export class BooksController extends BaseController {
   private update = async (request: Request, response: Response, next: NextFunction) => {
     const id = request.params.id;
     const dto = request.body as BookRequestDto;
-    const data = dto.toModel();
-    this.repo.update(id, data)
+    this.service.update(id, dto)
       .then((book) => {
         if (book) {
-          const result = BookResponseDto.fromModel(book);
-          response.send(result);
+          response.send(book);
         } else {
           response.sendStatus(StatusHelper.status404NotFound);
         }
@@ -82,7 +74,7 @@ export class BooksController extends BaseController {
 
   private delete = async (request: Request, response: Response, next: NextFunction) => {
     const id = request.params.id;
-    this.repo.delete(id)
+    this.service.delete(id)
       .then((deleted) => {
         if (deleted) {
           response.sendStatus(StatusHelper.status204NoContent);
