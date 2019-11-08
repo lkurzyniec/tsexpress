@@ -10,7 +10,7 @@ const bookSchema = new Schema({
     required: true,
     autopopulate: true,
   },
-  title: Schema.Types.String,
+  title: { type: Schema.Types.String, required: true },
 }, MongoDbConnector.globalSchemaOptions());
 bookSchema.plugin(autopopulate);
 

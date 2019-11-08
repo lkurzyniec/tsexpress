@@ -14,6 +14,33 @@ content-type: application/json
   "lastName": "K."
 }
 
+### Hello Secret
+GET {{apiUrl}}/hello/secret
+
+# ================= AUTH ======================= #
+
+### LOGIN
+// @name login
+POST {{apiUrl}}/auth/login
+content-type: application/json
+
+{
+  "email": "sample.email@address.pl",
+  "password": "wiezA123"
+}
+
+@authCookie = {{login.response.headers.Set-Cookie}}
+
+### REGISTER
+POST {{apiUrl}}/auth/register
+content-type: application/json
+
+{
+  "name": "Łukasz K.",
+  "email": "sample.email@address.pl",
+  "password": "wiezA123"
+}
+
 # ================= AUTHORS ======================= #
 
 ### GET all
@@ -28,6 +55,7 @@ GET {{apiUrl}}/authors/{{authors.response.body.$.[0].id}}
 // @name author
 POST {{apiUrl}}/authors
 content-type: application/json
+Cookie: Authorization={{authCookie}}
 
 {
   "fullName": "Stephen King"
@@ -37,6 +65,7 @@ content-type: application/json
 // @name author
 PUT {{apiUrl}}/authors/{{author.response.body.$.id}}
 content-type: application/json
+Cookie: Authorization={{authCookie}}
 
 {
   "fullName": "Stephen Edwin King"
@@ -44,6 +73,7 @@ content-type: application/json
 
 ### DELETE
 DELETE {{apiUrl}}/authors/{{author.response.body.$.id}}
+Cookie: Authorization={{authCookie}}
 
 # ================= BOOKS ======================= #
 
@@ -59,6 +89,7 @@ GET {{apiUrl}}/books/{{books.response.body.$.[0].id}}
 // @name book
 POST {{apiUrl}}/books
 content-type: application/json
+Cookie: Authorization={{authCookie}}
 
 {
   "title": "Doctor Sleep",
@@ -69,6 +100,7 @@ content-type: application/json
 // @name book
 PATCH  {{apiUrl}}/books/{{book.response.body.$.id}}
 content-type: application/json
+Cookie: Authorization={{authCookie}}
 
 {
   "title": "Doctor Sleep {{$randomInt 0 100}}"
@@ -76,24 +108,4 @@ content-type: application/json
 
 ### DELETE
 DELETE {{apiUrl}}/books/{{book.response.body.$.id}}
-
-# ================= AUTH ======================= #
-
-### LOGIN
-POST {{apiUrl}}/auth/login
-content-type: application/json
-
-{
-  "email": "test@test.pl",
-  "password": "wiezA123"
-}
-
-### REGISTER
-POST {{apiUrl}}/auth/register
-content-type: application/json
-
-{
-  "name": "Łukasz K.",
-  "email": "sample.email@address.pl",
-  "password": "wiezA123"
-}
+Cookie: Authorization={{authCookie}}

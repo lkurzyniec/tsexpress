@@ -37,7 +37,8 @@ export class BooksController extends BaseController {
         if (book) {
           response.send(book);
         } else {
-          response.sendStatus(StatusHelper.status404NotFound);
+          next(StatusHelper.error404NotFound);
+          return;
         }
         next();
       })
@@ -65,7 +66,8 @@ export class BooksController extends BaseController {
         if (book) {
           response.send(book);
         } else {
-          response.sendStatus(StatusHelper.status404NotFound);
+          next(StatusHelper.error404NotFound);
+          return;
         }
         next();
       })
@@ -79,7 +81,8 @@ export class BooksController extends BaseController {
         if (deleted) {
           response.sendStatus(StatusHelper.status204NoContent);
         } else {
-          response.sendStatus(StatusHelper.status404NotFound);
+          next(StatusHelper.error404NotFound);
+          return;
         }
         next();
       })

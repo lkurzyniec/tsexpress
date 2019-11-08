@@ -2,9 +2,9 @@ import { MongoDbConnector } from '../connectors/mongodb.connector';
 import { model, Document, Schema } from 'mongoose';
 
 const userSchema = new Schema({
-  name: Schema.Types.String,
-  email: Schema.Types.String,
-  password: Schema.Types.String,
+  name: { type: Schema.Types.String, required: true },
+  email: { type: Schema.Types.String, required: true, unique: true },
+  password: { type: Schema.Types.String, required: true },
 }, MongoDbConnector.globalSchemaOptions());
 
 export class User {

@@ -1,4 +1,4 @@
-import { DbLogger } from './../loggers/db.logger';
+import { AppLogger } from './../loggers/app.logger';
 import { AppConfig } from './../configurations/app.config';
 import * as mongoose from 'mongoose';
 import { injectable, inject } from 'inversify';
@@ -7,10 +7,15 @@ import { isNullOrWhitespace } from './../helpers/string.helper';
 @injectable()
 export class MongoDbConnector {
   @inject(AppConfig) private readonly appConfig: AppConfig;
-  @inject(DbLogger) private readonly dbLogger: DbLogger;
+  @inject(AppLogger) private readonly appLogger: AppLogger;
 
   public connect(): void {
-    const connectionOptions = { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false };
+    const connectionOptions = {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useFindAndModify: false,
+      useCreateIndex: true,
+    };
 
     let connector;
     if (isNullOrWhitespace(this.appConfig.mongoUser) && isNullOrWhitespace(this.appConfig.mongoPassword)) {
@@ -21,21 +26,19 @@ export class MongoDbConnector {
 
     connector.then(
       () => {
-        this.dbLogger.info(`Successfully connected to '${this.appConfig.mongoDatabase}'.`);
+        this.appLogger.info(`Successfully connected to '${this.appConfig.mongoDatabase}'.`);
       },
       err => {
-        this.dbLogger.error(err, `Error while connecting to '${this.appConfig.mongoDatabase}'.`);
+        this.appLogger.error(err, `Error while connecting to '${this.appConfig.mongoDatabase}'.`);
       }
     );
 
-    //mongoose.set('debug', true);
+    mongoose.set('debug', this.appConfig.debug);
   }
 
   public static globalSchemaOptions(): mongoose.SchemaOptions {
     return {
-      toJSON: {
-        versionKey: false,
-      }
+      // ...
     };
   }
 }

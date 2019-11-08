@@ -21,8 +21,9 @@ export class AuthorsService {
     return null;
   }
 
-  public async create(dto: AuthorRequestDto): Promise<AuthorResponseDto> {
+  public async create(dto: AuthorRequestDto, createdBy: string): Promise<AuthorResponseDto> {
     let model = this.dtoToModel(dto);
+    model.createdBy = createdBy;
     model = await this.repo.create(model);
     const result = this.modelToDto(model);
     return result;
@@ -45,6 +46,7 @@ export class AuthorsService {
     return new AuthorResponseDto({
       id: model._id,
       fullName: model.fullName,
+      createdBy: model.createdBy,
     });
   }
 

@@ -1,3 +1,4 @@
+import { HelloController } from './controllers/hello.controller';
 import 'reflect-metadata';
 import { RequestLoggerMiddleware } from './middlewares/request-logger.middleware';
 import { ResponseLoggerMiddleware } from './middlewares/response-logger.middleware';
@@ -8,9 +9,10 @@ import { AppConfig } from './configurations/app.config';
 import { BaseController } from './controllers/base.controller';
 import { ErrorMiddleware } from './middlewares/error.middleware';
 import { SwaggerConfig } from './configurations/swagger.config';
-import { json as jsonBodyParser } from 'body-parser';
+import * as cookieParser from 'cookie-parser';
 import * as express from 'express';
 import * as helmet from 'helmet';
+import { jsonIgnoreReplacer } from 'json-ignore';
 import { injectable, inject, multiInject } from 'inversify';
 import { AddressInfo } from 'net';
 
@@ -34,6 +36,7 @@ export class App {
 
     this.dbConnector.connect();
 
+    this.setExpressSettings();
     this.initializePreMiddlewares();
     this.initializeControllers();
     this.initializePostMiddlewares();
@@ -56,9 +59,14 @@ export class App {
     });
   }
 
+  private setExpressSettings(): void {
+    this.app.set('json replacer', jsonIgnoreReplacer);
+  }
+
   private initializePreMiddlewares(): void {
     this.app.use(helmet());
-    this.app.use(jsonBodyParser());
+    this.app.use(cookieParser());
+    this.app.use(express.json());
     this.app.use(this.requestLoggerMiddleware.handle.bind(this.requestLoggerMiddleware));
   }
 

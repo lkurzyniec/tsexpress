@@ -1,7 +1,9 @@
+import { AuthLogger } from './../loggers/auth.logger';
+import { AuthMiddleware } from './../middlewares/auth.middleware';
 import { BooksService } from '../services/books.service';
 import { AuthorsService } from './../services/authors.service';
-import { SecretsProvider } from './../token/secrets.provider';
-import { TokenService } from '../services/token.service';
+import { SecretsProvider } from '../services/token/secrets.provider';
+import { TokenService } from '../services/token/token.service';
 import { AuthService } from './../services/auth.service';
 import { UserModel } from './../models/user.model';
 import { UsersRepository } from './../repositories/users.repository';
@@ -26,13 +28,12 @@ import { AppConfig } from './app.config';
 import { BaseController } from './../controllers/base.controller';
 import { BooksController } from './../controllers/books.controller';
 import { BooksRepository } from './../repositories/books.repository';
-import { DbLogger } from './../loggers/db.logger';
 import { SwaggerConfig } from './swagger.config';
 
 // more info: https://github.com/inversify/InversifyJS/tree/master/wiki
 
 export class Container {
-  private container: InversifyContainer;
+  private container: InversifyContainer = new InversifyContainer();
 
   public getApp(): App {
     this.register();
@@ -40,8 +41,6 @@ export class Container {
   }
 
   private register(): void {
-    this.container = new InversifyContainer();
-
     this.container.load(this.getLoggersModule());
     this.container.load(this.getMiddlewaresModule());
     this.container.load(this.getGeneralModule());
@@ -56,9 +55,9 @@ export class Container {
   private getControllersModule(): ContainerModule {
     return new ContainerModule((bind: interfaces.Bind) => {
       bind<BaseController>(BaseController).to(BooksController);
-      bind<BaseController>(BaseController).to(HelloController);
       bind<BaseController>(BaseController).to(AuthorsController);
       bind<BaseController>(BaseController).to(AuthController);
+      bind<BaseController>(BaseController).to(HelloController);
     });
   }
 
@@ -72,10 +71,10 @@ export class Container {
 
   private getLoggersModule(): ContainerModule {
     return new ContainerModule((bind: interfaces.Bind) => {
-      bind<DbLogger>(DbLogger).toSelf();
       bind<AppLogger>(AppLogger).toSelf();
       bind<RequestLogger>(RequestLogger).toSelf();
       bind<ResponseLogger>(ResponseLogger).toSelf();
+      bind<AuthLogger>(AuthLogger).toSelf();
     });
   }
 
@@ -84,6 +83,7 @@ export class Container {
       bind<RequestLoggerMiddleware>(RequestLoggerMiddleware).toSelf();
       bind<ErrorMiddleware>(ErrorMiddleware).toSelf();
       bind<ResponseLoggerMiddleware>(ResponseLoggerMiddleware).toSelf();
+      bind<AuthMiddleware>(AuthMiddleware).toSelf();
     });
   }
 

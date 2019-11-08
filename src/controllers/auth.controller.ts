@@ -7,32 +7,18 @@ import { BaseController } from './base.controller';
 import { Request, Response, NextFunction } from "express";
 import { StatusHelper } from '../helpers/status.helper';
 
-
 @injectable()
 export class AuthController extends BaseController {
   @inject(AuthService) private auth: AuthService;
 
   constructor() {
-    super('/auth');
+    super('/auth', false);
   }
 
   public initializeRoutes(): void {
-    this.router.post(`${this.path}/login`, this.validator.checkBody(LoginRequestDto), this.login);
     this.router.post(`${this.path}/register`, this.validator.checkBody(RegisterRequestDto), this.register);
-  }
-
-  private login = async (request: Request, response: Response, next: NextFunction) => {
-    const dto = request.body as LoginRequestDto;
-    const loginResult = await this.auth.login(dto);
-    if (loginResult) {
-      response.setHeader('Set-Cookie', `Authorization=${loginResult.tokenInfo.token}; HttpOnly; Max-Age=${loginResult.tokenInfo.expiresIn}`);
-      response.send(loginResult.user);
-      next();
-      return;
-    }
-
-    response.sendStatus(StatusHelper.status401Unauthorized);
-    next();
+    this.router.post(`${this.path}/login`, this.validator.checkBody(LoginRequestDto), this.login);
+    this.router.post(`${this.path}/logout`, this.logout);
   }
 
   private register = async (request: Request, response: Response, next: NextFunction) => {
@@ -45,5 +31,24 @@ export class AuthController extends BaseController {
     }
 
     next(new ValidationError(ValidationErrorPlace.Body, [result]));
+  }
+
+  private login = async (request: Request, response: Response, next: NextFunction) => {
+    const dto = request.body as LoginRequestDto;
+    const loginResult = await this.auth.login(dto);
+    if (loginResult) {
+      response.setHeader('Set-Cookie', `Authorization=${loginResult.tokenInfo.token}; HttpOnly; Max-Age=${loginResult.tokenInfo.expiresIn}`);
+      response.send(loginResult.user);
+      next();
+      return;
+    }
+
+    next(StatusHelper.error401Unauthorized);
+  }
+
+  private logout = async (request: Request, response: Response, next: NextFunction) => {
+    response.setHeader('Set-Cookie', 'Authorization=; Max-Age=0');
+    response.sendStatus(StatusHelper.status204NoContent);
+    next();
   }
 }

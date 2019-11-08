@@ -1,4 +1,4 @@
-import { UserResponseDto } from './../dtos/auth/user.response.dto';
+import { UserResponseDto } from '../../dtos/auth/user.response.dto';
 
 export interface TokenInfo {
   token: string;
@@ -6,7 +6,7 @@ export interface TokenInfo {
 }
 
 export interface TokenData {
-  _id: string;
+  userId: string;
   name: string;
   email: string;
 }

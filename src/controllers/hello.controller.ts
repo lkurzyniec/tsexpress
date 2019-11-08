@@ -1,9 +1,13 @@
+import { injectable } from 'inversify';
+import { Request, Response, NextFunction } from "express";
 import { BaseController } from './base.controller';
 import { sentence } from 'txtgen';
+import { auth } from './../decorators/auth.decorator';
 
+@injectable()
 export class HelloController extends BaseController {
   constructor() {
-    super('/hello');
+    super('/hello', false);
   }
 
   public initializeRoutes(): void {
@@ -46,10 +50,20 @@ export class HelloController extends BaseController {
      */
     this.router.post(this.path, (request, response, next) => {
       response.send({
-        message: sentence(),
-        response: { ...request.body }
+        message: 'Your request were:',
+        yourRequest: { ...request.body }
       });
       next();
     });
+
+    this.router.get(`${this.path}/secret`, this.secret);
+  }
+
+  @auth()
+  private secret (request: Request, response: Response, next: NextFunction) {
+    response.send({
+      message: sentence()
+    });
+    next();
   }
 }

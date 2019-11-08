@@ -1,7 +1,9 @@
+import { HttpError } from './../errors/http.error';
 import { AppConfig } from '../configurations/app.config';
 import { ValidationError } from '../errors/validation.error';
 import { injectable, inject } from 'inversify';
 import { StatusHelper } from './status.helper';
+import * as statuses from 'statuses';
 
 export interface ErrorResult {
   status: number;
@@ -15,17 +17,18 @@ export class ErrorExtractor {
   @inject(AppConfig) private appConfig: AppConfig;
 
   public extract(error: any): ErrorResult {
-    let status = StatusHelper.status500InternalServerError;
-    let message = 'Something went wrong';
+    const status500InternalServerError: number = 500;
+
+    let status = status500InternalServerError;
+    if (error instanceof HttpError) {
+      status = error.status;
+    }
+
+    let message = statuses[status];
 
     let errors = null;
     if (error instanceof ValidationError) {
-      status = StatusHelper.status400BadRequest;
-      message = `Validation error (${error.place})`;
       errors = error.errors;
-    }
-    else if (error instanceof Error) {
-      errors = [error.message];
     }
 
     let result: ErrorResult = {
@@ -33,11 +36,13 @@ export class ErrorExtractor {
       message,
     }
 
+    if (this.appConfig.debug && status === status500InternalServerError) {
+      result.stack = error.stack;
+      errors = [error.message];
+    }
+
     if (errors !== null) {
       result.errors = errors;
-    }
-    if (this.appConfig.debug && error.stack && status === StatusHelper.status500InternalServerError) {
-      result.stack = error.stack;
     }
 
     return result;

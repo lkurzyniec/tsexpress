@@ -1,14 +1,16 @@
+import { HttpError } from './http.error';
+
 export enum ValidationErrorPlace {
   Body = 'BODY',
   Url = 'URL',
 }
 
-export class ValidationError extends Error {
+export class ValidationError extends HttpError {
   constructor(
     public place: ValidationErrorPlace,
     public errors: string[]
   ) {
-    super(`${place} Validation error: ${errors.join('; ')}`);
+    super(400);
     Object.setPrototypeOf(this, ValidationError.prototype);
   }
 }

@@ -1,6 +1,6 @@
-import { AppConfig } from './../configurations/app.config';
+import { AppConfig } from '../../configurations/app.config';
 import { injectable, inject } from 'inversify';
-import { readFileSync, readdirSync } from 'fs';
+import { readFileSync } from 'fs';
 
 @injectable()
 export class SecretsProvider {
@@ -17,7 +17,7 @@ export class SecretsProvider {
   constructor(
     @inject(AppConfig) private appConfig: AppConfig
   ) {
-    this._privateKey = readFileSync(`${appConfig.sourcePath}/token/private.key`, 'utf8');
-    this._publicKey = readFileSync(`${appConfig.sourcePath}/token/public.key`, 'utf8');
+    this._privateKey = readFileSync(`${appConfig.sourcePath}/services/token/private.key`, 'utf8');
+    this._publicKey = readFileSync(`${appConfig.sourcePath}/services/token/public.key`, 'utf8');
   }
 }

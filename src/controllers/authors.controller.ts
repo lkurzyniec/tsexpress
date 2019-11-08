@@ -1,8 +1,9 @@
+import { AuthenticatedRequest } from './../interfaces/authenticated.request';
 import { AuthorsService } from './../services/authors.service';
 import { AuthorRequestDto } from '../dtos/author/author.dto';
 import { injectable, inject } from 'inversify';
 import { BaseController } from './base.controller';
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, Router, RequestHandler } from "express";
 import { StatusHelper } from './../helpers/status.helper';
 
 @injectable()
@@ -14,11 +15,12 @@ export class AuthorsController extends BaseController {
   }
 
   public initializeRoutes(): void {
-    this.router.get(this.path, this.getAll);
-    this.router.get(`${this.path}/:id`, this.validator.checkId(), this.getById);
-    this.router.post(this.path, this.validator.checkBody(AuthorRequestDto), this.create);
-    this.router.put(`${this.path}/:id`, this.validator.checkIdAndBody(AuthorRequestDto), this.update);
-    this.router.delete(`${this.path}/:id`, this.validator.checkId(), this.delete);
+    this.router
+      .get(this.path, this.getAll)
+      .get(`${this.path}/:id`, this.validator.checkId(), this.getById)
+      .post(this.path, this.validator.checkBody(AuthorRequestDto), this.create)
+      .put(`${this.path}/:id`, this.validator.checkIdAndBody(AuthorRequestDto), this.update)
+      .delete(`${this.path}/:id`, this.validator.checkId(), this.delete);
   }
 
   private getAll = async (request: Request, response: Response, next: NextFunction) => {
@@ -35,18 +37,20 @@ export class AuthorsController extends BaseController {
     this.service.findById(id)
       .then((author) => {
         if (author) {
+          response.header('x-created-by', author.createdBy);
           response.send(author);
         } else {
-          response.sendStatus(StatusHelper.status404NotFound);
+          next(StatusHelper.error404NotFound);
+          return;
         }
         next();
       })
       .catch(next);
   }
 
-  private create = async (request: Request, response: Response, next: NextFunction) => {
+  private create = async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
     const dto = request.body as AuthorRequestDto;
-    this.service.create(dto)
+    this.service.create(dto, request.auth.email)
       .then((author) => {
         response
           .location(`${this.path}/${author.id}`)
@@ -65,7 +69,8 @@ export class AuthorsController extends BaseController {
         if (author) {
           response.send(author);
         } else {
-          response.sendStatus(StatusHelper.status404NotFound);
+          next(StatusHelper.error404NotFound);
+          return;
         }
         next();
       })
@@ -79,7 +84,8 @@ export class AuthorsController extends BaseController {
         if (deleted) {
           response.sendStatus(StatusHelper.status204NoContent);
         } else {
-          response.sendStatus(StatusHelper.status404NotFound);
+          next(StatusHelper.error404NotFound);
+          return;
         }
         next();
       })

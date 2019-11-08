@@ -1,4 +1,5 @@
 import { IsString, MinLength, Contains } from 'class-validator';
+import { jsonIgnore } from 'json-ignore';
 
 export class AuthorRequestDto {
   @IsString()
@@ -10,6 +11,8 @@ export class AuthorRequestDto {
 export class AuthorResponseDto {
   public id: string;
   public fullName: string;
+  @jsonIgnore()
+  public createdBy: string;
 
   constructor(init?: Partial<AuthorResponseDto>) {
     Object.assign(this, init);
