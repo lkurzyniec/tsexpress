@@ -44,14 +44,19 @@ export class BooksService {
   }
 
   private modelToDto(model: Book): BookResponseDto {
-    return new BookResponseDto({
+    let result = new BookResponseDto({
       id: model._id,
-      title: model.title,
-      author: new AuthorResponseDto({
+      title: model.title
+    });
+
+    if (model.author !== null) {
+      result.author = new AuthorResponseDto({
         id: model.author._id,
         fullName: model.author.fullName,
-      }),
-    });
+      });
+    }
+
+    return result;
   }
 
   private dtoToModel(dto: BookRequestDto): Book {

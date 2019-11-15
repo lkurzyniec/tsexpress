@@ -41,6 +41,9 @@ content-type: application/json
   "password": "wiezA123"
 }
 
+### LOGOUT
+POST {{apiUrl}}/auth/logout
+
 # ================= AUTHORS ======================= #
 
 ### GET all

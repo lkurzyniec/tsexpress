@@ -40,6 +40,14 @@ export class Container {
     return this.container.get<App>(App);
   }
 
+  // https://github.com/inversify/InversifyJS/blob/master/wiki/recipes.md#injecting-dependencies-into-a-function
+  public bindDependencies(func: Function, dependencies: any[]): Function {
+    let injections = dependencies.map((dependency) => {
+        return this.container.get(dependency);
+    });
+    return func.bind(func, ...injections);
+}
+
   private register(): void {
     this.container.load(this.getLoggersModule());
     this.container.load(this.getMiddlewaresModule());

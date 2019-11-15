@@ -1,7 +1,5 @@
-import { Book } from './../../models/book.model';
 import { IsString, MinLength, IsMongoId } from 'class-validator';
 import { AuthorResponseDto } from '../author/author.dto';
-import { Author } from './../../models/author.model';
 
 export class BookRequestDto {
   @IsString()

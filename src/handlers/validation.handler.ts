@@ -9,6 +9,11 @@ import { param, validationResult } from 'express-validator';
 export class ValidationHandler {
   public checkBody(type: any, skipMissingProperties = false): RequestHandler {
     return (request: Request, response: Response, next: NextFunction) => {
+      if (Object.keys(request.body).length === 0) {
+        next(new ValidationError(ValidationErrorPlace.Body, ['Body of request is required']));
+        return;
+      }
+
       const dto = plainToClass(type, request.body);
       request.body = dto;
       validate(dto, { validationError: { target: false }, skipMissingProperties })

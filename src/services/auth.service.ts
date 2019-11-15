@@ -1,3 +1,4 @@
+import { User } from './../models/user.model';
 import { UserResponseDto } from './../dtos/auth/user.response.dto';
 import { LoginResult } from './token/token';
 import { TokenService } from './token/token.service';
@@ -23,7 +24,7 @@ export class AuthService {
       return RegisterResult.EmailTaken;
     }
 
-    const data = dto.toModel();
+    const data = this.dtoToModel(dto);
     data.password = await hash(dto.password, 10);
     await this.repo.create(data);
     return RegisterResult.Success;
@@ -35,7 +36,7 @@ export class AuthService {
       const isPasswordMatch = await compare(dto.password, user.password);
       if (isPasswordMatch) {
         const token = this.tokenService.create(user);
-        const userDto = UserResponseDto.fromModel(user);
+        const userDto = this.modelToDto(user);
         return {
           tokenInfo: token,
           user: userDto,
@@ -44,4 +45,18 @@ export class AuthService {
     }
     return null;
   }
+
+  private modelToDto(model: User): UserResponseDto {
+    return new UserResponseDto({
+      name: model.name,
+      email: model.email,
+    });
+  }
+
+  private dtoToModel(dto: RegisterRequestDto): User {
+    return new User({
+      name: dto.name,
+      email: dto.email,
+    });
+  };
 }

@@ -12,6 +12,7 @@ import { SwaggerConfig } from './configurations/swagger.config';
 import * as cookieParser from 'cookie-parser';
 import * as express from 'express';
 import * as helmet from 'helmet';
+import * as cors from 'cors';
 import { jsonIgnoreReplacer } from 'json-ignore';
 import { injectable, inject, multiInject } from 'inversify';
 import { AddressInfo } from 'net';
@@ -65,6 +66,7 @@ export class App {
 
   private initializePreMiddlewares(): void {
     this.app.use(helmet());
+    this.app.use(cors());
     this.app.use(cookieParser());
     this.app.use(express.json());
     this.app.use(this.requestLoggerMiddleware.handle.bind(this.requestLoggerMiddleware));

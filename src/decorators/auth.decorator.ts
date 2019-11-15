@@ -1,5 +1,5 @@
 import { AuthenticatedRequest } from './../interfaces/authenticated.request';
-import { NextFunction } from "express";
+import { NextFunction, Response } from "express";
 
 export function auth(): MethodDecorator {
   return function(target: any, propertyKey: any, descriptor: PropertyDescriptor) {
