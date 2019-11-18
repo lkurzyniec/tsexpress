@@ -23,6 +23,16 @@ export class BooksService {
     return null;
   }
 
+  public async getByAuthorId(authorId: string): Promise<BookResponseDto[]> {
+    const books = await this.repo.findMany({ author: authorId });
+    const result = books.map((item) => {
+      const dto = this.modelToDto(item);
+      delete dto.author;
+      return dto;
+    });
+    return result;
+  }
+
   public async create(dto: BookRequestDto): Promise<BookResponseDto> {
     let model = this.dtoToModel(dto);
     model = await this.repo.create(model);

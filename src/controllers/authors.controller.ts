@@ -1,3 +1,4 @@
+import { BooksService } from './../services/books.service';
 import { AuthenticatedRequest } from './../interfaces/authenticated.request';
 import { AuthorsService } from './../services/authors.service';
 import { AuthorRequestDto } from '../dtos/author/author.dto';
@@ -9,6 +10,7 @@ import { StatusHelper } from './../helpers/status.helper';
 @injectable()
 export class AuthorsController extends BaseController {
   @inject(AuthorsService) private service: AuthorsService;
+  @inject(BooksService) private booksService: BooksService;
 
   constructor() {
     super('/authors');
@@ -20,7 +22,9 @@ export class AuthorsController extends BaseController {
       .get(`${this.path}/:id`, this.validator.checkId(), this.getById)
       .post(this.path, this.validator.checkBody(AuthorRequestDto), this.create)
       .put(`${this.path}/:id`, this.validator.checkIdAndBody(AuthorRequestDto), this.update)
-      .delete(`${this.path}/:id`, this.validator.checkId(), this.delete);
+      .delete(`${this.path}/:id`, this.validator.checkId(), this.delete)
+
+      .get(`${this.path}/:id/books`, this.validator.checkId(), this.getBooks);
   }
 
   private getAll = async (request: Request, response: Response, next: NextFunction) => {
@@ -37,12 +41,22 @@ export class AuthorsController extends BaseController {
     this.service.findById(id)
       .then((author) => {
         if (author) {
-          response.header('x-created-by', author.createdBy);
+          response.header('X-Created-By', author.createdBy);
           response.send(author);
         } else {
           next(StatusHelper.error404NotFound);
           return;
         }
+        next();
+      })
+      .catch(next);
+  }
+
+  private getBooks = async (request: Request, response: Response, next: NextFunction) => {
+    const id = request.params.id;
+    this.booksService.getByAuthorId(id)
+      .then((books) => {
+        response.send(books);
         next();
       })
       .catch(next);

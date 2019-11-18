@@ -15,6 +15,10 @@ export abstract class BaseRepository<TModel>{
     return this.mongooseModel.findOne(conditions).exec();
   }
 
+  public findMany(conditions: any): Promise<TModel[]> {
+    return this.mongooseModel.find(conditions).exec();
+  }
+
   public exists(conditions: Partial<TModel>): Promise<boolean> {
     return this.mongooseModel.exists(conditions);
   }

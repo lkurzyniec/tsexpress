@@ -10,13 +10,13 @@ const publisherSchema = new Schema({
 
 const bookSchema = new Schema({
   author: {
-    ref: 'Author',
+    ref: 'Author',                // One-To-Many
     type: Schema.Types.ObjectId,
     required: true,
     autopopulate: true,
   },
 
-  publisher: publisherSchema, // One-To-One
+  publisher: publisherSchema,     // One-To-One
 
   title: { type: Schema.Types.String, required: true },
 }, MongoDbConnector.globalSchemaOptions());
