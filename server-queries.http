@@ -96,7 +96,10 @@ Cookie: Authorization={{authCookie}}
 
 {
   "title": "Doctor Sleep",
-  "authorId": "{{author.response.body.$.id}}"
+  "authorId": "{{author.response.body.$.id}}",
+  "publisher": {
+    "name": "Scribner"
+  }
 }
 
 ### UPDATE

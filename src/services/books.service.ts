@@ -1,7 +1,7 @@
 import { Author } from './../models/author.model';
 import { AuthorResponseDto } from './../dtos/author/author.dto';
-import { Book } from '../models/book.model';
-import { BookResponseDto, BookRequestDto } from '../dtos/book/book.dto';
+import { Book, Publisher } from '../models/book.model';
+import { BookResponseDto, BookRequestDto, BookPublisherResponseDto } from '../dtos/book/book.dto';
 import { BooksRepository } from '../repositories/books.repository';
 import { inject, injectable } from 'inversify';
 
@@ -56,6 +56,13 @@ export class BooksService {
       });
     }
 
+    if (model.publisher !== null) {
+      result.publisher = new BookPublisherResponseDto({
+        name: model.publisher.name,
+        address: model.publisher.address,
+      });
+    }
+
     return result;
   }
 
@@ -63,11 +70,20 @@ export class BooksService {
     const result = new Book({
       title: dto.title,
     });
+
     if (dto.authorId) {
       result.author = new Author({
         _id: dto.authorId,
       });
     }
+
+    if (dto.publisher) {
+      result.publisher = new Publisher({
+        name: dto.publisher.name,
+        address: dto.publisher.address,
+      });
+    }
+
     return result;
   };
 }

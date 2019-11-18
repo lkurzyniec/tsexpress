@@ -19,7 +19,7 @@ export class ValidationHandler {
       validate(dto, { validationError: { target: false }, skipMissingProperties })
         .then((errors: Error[]) => {
           if (errors.length > 0) {
-            const resultErrors = errors.map((item) => Object.values(item.constraints)).reduce((a, b) => { return a.concat(b); });
+            const resultErrors = errors.map((item) => { return this.getError(item); });
             next(new ValidationError(ValidationErrorPlace.Body, resultErrors));
             return;
           }
@@ -45,5 +45,12 @@ export class ValidationHandler {
 
   public checkIdAndBody(type: any, skipMissingProperties = false): RequestHandler[] {
     return [...this.checkId(), this.checkBody(type, skipMissingProperties)];
+  }
+
+  private getError(err: Error): string {
+    if (err.children && err.children.length) {
+      return `${err.property}: ` + err.children.map((item) => { return this.getError(item); }).join('; ');
+    }
+    return Object.values(err.constraints).join('; ');
   }
 }
