@@ -8,7 +8,7 @@ export class AuthorsService {
   @inject(AuthorsRepository) private repo: AuthorsRepository;
 
   public async getAll(): Promise<AuthorResponseDto[]> {
-    const authors = await this.repo.getAll();
+    const authors = await this.repo.getAll({ fullName: 'asc' });
     const result = authors.map((item) => this.modelToDto(item));
     return result;
   }
