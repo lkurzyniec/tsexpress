@@ -6,13 +6,14 @@
         "module": "commonjs",
         "moduleResolution": "node",
 
-        "types": ["reflect-metadata", "node"],
+        "types": ["reflect-metadata", "node", "jest"],
         "lib": ["es6", "dom"],
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true
     },
     "include": [
-        "src/**/*.ts"
+        "src/**/*.ts",
+        "test/**/*.ts"
     ],
     "exclude": [
         "node_modules"

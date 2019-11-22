@@ -2,7 +2,6 @@ import { HttpError } from './../errors/http.error';
 import { AppConfig } from '../configurations/app.config';
 import { ValidationError } from '../errors/validation.error';
 import { injectable, inject } from 'inversify';
-import { StatusHelper } from './status.helper';
 import * as statuses from 'statuses';
 
 export interface ErrorResult {

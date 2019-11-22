@@ -33,31 +33,38 @@ import { SwaggerConfig } from './swagger.config';
 // more info: https://github.com/inversify/InversifyJS/tree/master/wiki
 
 export class Container {
-  private container: InversifyContainer = new InversifyContainer();
+  private _container: InversifyContainer = new InversifyContainer();
+
+  protected get container() : InversifyContainer {
+    return this._container;
+  }
+
+  constructor() {
+    this.register();
+  }
 
   public getApp(): App {
-    this.register();
-    return this.container.get<App>(App);
+    return this.container.get(App);
   }
 
   // https://github.com/inversify/InversifyJS/blob/master/wiki/recipes.md#injecting-dependencies-into-a-function
-  public bindDependencies(func: Function, dependencies: any[]): Function {
+  private bindDependencies(func: Function, dependencies: any[]): Function {
     let injections = dependencies.map((dependency) => {
-        return this.container.get(dependency);
+      return this.container.get(dependency);
     });
     return func.bind(func, ...injections);
-}
+  }
 
   private register(): void {
-    this.container.load(this.getLoggersModule());
-    this.container.load(this.getMiddlewaresModule());
-    this.container.load(this.getGeneralModule());
-    this.container.load(this.getRepositoriesModule());
-    this.container.load(this.getControllersModule());
-    this.container.load(this.getHelpersModule());
-    this.container.load(this.getServicesModule());
+    this._container.load(this.getLoggersModule());
+    this._container.load(this.getMiddlewaresModule());
+    this._container.load(this.getGeneralModule());
+    this._container.load(this.getRepositoriesModule());
+    this._container.load(this.getControllersModule());
+    this._container.load(this.getHelpersModule());
+    this._container.load(this.getServicesModule());
 
-    this.container.bind<App>(App).toSelf();
+    this._container.bind<App>(App).toSelf();
   }
 
   private getControllersModule(): ContainerModule {
