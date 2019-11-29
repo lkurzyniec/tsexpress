@@ -16,11 +16,11 @@ Source code based on [TypeScript Express tutorial](https://wanago.io/courses/typ
 * bcrypt and jsonwebtoken
 * jest
 
-## What do I like in this solution
+## What I like in this solution
 
 * DI container (by InversifyJS) and injection of dependencies
 * modularity - build at the top of SOLID rules, lowly coupled
-* unit tests (by jest)
+* unit tests (with jest)
 
 ## Start
 

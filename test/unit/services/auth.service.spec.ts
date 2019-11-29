@@ -27,7 +27,7 @@ describe('AuthService', () => {
 
       //then
       expect(result)
-        .toBe(RegisterResult.EmailTaken);
+        .toEqual(RegisterResult.EmailTaken);
 
       expect(usersRepositoryMock.exists)
         .toBeCalledWith(
@@ -65,7 +65,7 @@ describe('AuthService', () => {
 
       //then
       expect(result)
-        .toBe(RegisterResult.Success);
+        .toEqual(RegisterResult.Success);
 
       expect(usersRepositoryMock.exists)
         .toBeCalledTimes(1);
@@ -101,7 +101,8 @@ describe('AuthService', () => {
       } as LoginRequestDto);
 
       //then
-      expect(result).toBe(null);
+      expect(result)
+        .toBeNull();
 
       expect(usersRepositoryMock.findOne)
         .toBeCalledWith(expect.objectContaining({
@@ -137,7 +138,8 @@ describe('AuthService', () => {
       } as LoginRequestDto);
 
       //then
-      expect(result).toBe(null);
+      expect(result)
+        .toBeNull();
 
       expect(usersRepositoryMock.findOne)
         .toBeCalled();
@@ -158,7 +160,7 @@ describe('AuthService', () => {
 
       const tokenInfo = {
         token: 'TEST token',
-      } as TokenInfo;
+      };
 
       const usersRepositoryMock = testContext.mock<UsersRepository>(() => ({
         findOne: jest.fn(() => Promise.resolve(user as any)),
@@ -169,15 +171,17 @@ describe('AuthService', () => {
       }), BcryptWrapper);
 
       const tokenServiceMock = testContext.mock<TokenService>(() => ({
-        create: jest.fn(() => tokenInfo),
+        create: jest.fn(() => tokenInfo as TokenInfo),
       }), TokenService);
 
       //when
       var result = await testContext.get(AuthService).login({} as LoginRequestDto);
 
       //then
-      expect(result.tokenInfo).toBe(tokenInfo);
-      expect(result.user).toEqual(user);
+      expect(result.tokenInfo)
+        .toEqual(tokenInfo);
+      expect(result.user)
+        .toEqual(user);
 
       expect(usersRepositoryMock.findOne)
         .toBeCalled();

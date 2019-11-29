@@ -2,7 +2,7 @@
   "name": "tsexpress",
   "version": "0.0.2",
   "description": "Simple API in nodeJS with TypeScript and express",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "dev": "ts-node-dev --no-notify --clear --debounce 1000 ./src/server.ts",
     "test": "jest",
@@ -52,5 +52,13 @@
     "jest": "^24.9.0",
     "ts-jest": "^24.1.0",
     "ts-node-dev": "^1.0.0-pre.44"
+  },
+
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "setupFilesAfterEnv": [
+      "reflect-metadata"
+    ]
   }
 }

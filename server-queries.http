@@ -55,7 +55,6 @@ GET {{apiUrl}}/authors
 GET {{apiUrl}}/authors/{{authors.response.body.$.[0].id}}
 
 ### GET author books
-// @name author
 GET {{apiUrl}}/authors/{{authors.response.body.$.[0].id}}/books
 
 ### CREATE
@@ -65,7 +64,7 @@ content-type: application/json
 Cookie: Authorization={{authCookie}}
 
 {
-  "fullName": "Stephen King"
+  "fullName": "Daniel Brown"
 }
 
 ### UPDATE
@@ -75,7 +74,7 @@ content-type: application/json
 Cookie: Authorization={{authCookie}}
 
 {
-  "fullName": "Stephen Edwin King"
+  "fullName": "Daniel Gerhard Brown"
 }
 
 ### DELETE

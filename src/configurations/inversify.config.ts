@@ -1,3 +1,4 @@
+import { JwtWrapper } from './../wrappers/jwt.wrapper';
 import { BcryptWrapper } from './../wrappers/bcrypt.wrapper';
 import { AuthLogger } from './../loggers/auth.logger';
 import { AuthMiddleware } from './../middlewares/auth.middleware';
@@ -132,6 +133,7 @@ export class Container {
   private getWrappersModule(): ContainerModule {
     return new ContainerModule((bind: interfaces.Bind) => {
       bind<BcryptWrapper>(BcryptWrapper).toSelf();
+      bind<JwtWrapper>(JwtWrapper).toSelf();
     });
   }
 }

@@ -4,13 +4,14 @@ import { User } from '../../models/user.model';
 import { AppConfig } from '../../configurations/app.config';
 import { TokenInfo, TokenData } from './token';
 import { injectable, inject } from 'inversify';
-import * as jwt from 'jsonwebtoken';
+import { JwtWrapper } from '../../wrappers/jwt.wrapper';
 
 @injectable()
 export class TokenService {
   @inject(AppConfig) private readonly appConfig: AppConfig;
   @inject(SecretsProvider) private readonly secretsProvider: SecretsProvider;
   @inject(AuthLogger) private readonly authLogger: AuthLogger;
+  @inject(JwtWrapper) private readonly jwt: JwtWrapper;
 
   public create(user: User): TokenInfo {
     const tokenData: TokenData = {
@@ -19,11 +20,14 @@ export class TokenService {
       email: user.email,
     };
 
-    const signOptions = this.getSignOptions();
-    const token = jwt.sign(tokenData, this.secretsProvider.privateKey, signOptions);
+    const options = {
+      algorithm: 'RS256',
+      expiresIn: this.appConfig.tokenExpirationInMin * 60,
+    };
+    const token = this.jwt.sign(tokenData, this.secretsProvider.privateKey, options);
 
     return {
-      expiresIn: signOptions.expiresIn as number,
+      expiresIn: options.expiresIn as number,
       token,
     };
   }
@@ -34,8 +38,10 @@ export class TokenService {
     }
 
     try {
-      const signOptions = this.getSignOptions();
-      const tokenData = jwt.verify(token, this.secretsProvider.publicKey, signOptions) as TokenData;
+      const options = {
+        algorithms: ['RS256'],
+      };
+      const tokenData = this.jwt.verify(token, this.secretsProvider.publicKey, options) as TokenData;
       return tokenData;
     } catch (err) {
       if (err.name !== 'TokenExpiredError') {
@@ -43,12 +49,5 @@ export class TokenService {
       }
       return null;
     }
-  }
-
-  private getSignOptions(): jwt.SignOptions {
-    return {
-      algorithm: 'RS256',
-      expiresIn: this.appConfig.tokenExpirationInMin * 60,
-    };
   }
 }
