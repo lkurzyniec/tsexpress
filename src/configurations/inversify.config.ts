@@ -1,3 +1,4 @@
+import { BcryptWrapper } from './../wrappers/bcrypt.wrapper';
 import { AuthLogger } from './../loggers/auth.logger';
 import { AuthMiddleware } from './../middlewares/auth.middleware';
 import { BooksService } from '../services/books.service';
@@ -63,6 +64,7 @@ export class Container {
     this._container.load(this.getControllersModule());
     this._container.load(this.getHelpersModule());
     this._container.load(this.getServicesModule());
+    this._container.load(this.getWrappersModule());
 
     this._container.bind<App>(App).toSelf();
   }
@@ -124,6 +126,12 @@ export class Container {
       bind<TokenService>(TokenService).toSelf();
       bind<AuthorsService>(AuthorsService).toSelf();
       bind<BooksService>(BooksService).toSelf();
+    });
+  }
+
+  private getWrappersModule(): ContainerModule {
+    return new ContainerModule((bind: interfaces.Bind) => {
+      bind<BcryptWrapper>(BcryptWrapper).toSelf();
     });
   }
 }

@@ -1,3 +1,4 @@
+import { BcryptWrapper } from './../wrappers/bcrypt.wrapper';
 import { User } from './../models/user.model';
 import { UserResponseDto } from './../dtos/auth/user.response.dto';
 import { LoginResult } from './token/token';
@@ -6,7 +7,6 @@ import { LoginRequestDto } from '../dtos/auth/login.request.dto';
 import { UsersRepository } from './../repositories/users.repository';
 import { RegisterRequestDto } from '../dtos/auth/register.request.dto';
 import { injectable, inject } from 'inversify';
-import { hash, compare } from 'bcrypt';
 
 export enum RegisterResult {
   Success = 'Success',
@@ -15,8 +15,11 @@ export enum RegisterResult {
 
 @injectable()
 export class AuthService {
+  private readonly salt = 10;
+
   @inject(UsersRepository) private repo: UsersRepository;
   @inject(TokenService) private tokenService: TokenService;
+  @inject(BcryptWrapper) private bcrypt: BcryptWrapper;
 
   public async register(dto: RegisterRequestDto): Promise<RegisterResult> {
     const isEmailTaken = await this.repo.exists({ email: dto.email });
@@ -25,7 +28,7 @@ export class AuthService {
     }
 
     const data = this.dtoToModel(dto);
-    data.password = await hash(dto.password, 10);
+    data.password = await this.bcrypt.hash(dto.password, this.salt);
     await this.repo.create(data);
     return RegisterResult.Success;
   }
@@ -33,7 +36,7 @@ export class AuthService {
   public async login(dto: LoginRequestDto): Promise<LoginResult> {
     const user = await this.repo.findOne({ email: dto.email });
     if (user) {
-      const isPasswordMatch = await compare(dto.password, user.password);
+      const isPasswordMatch = await this.bcrypt.compare(dto.password, user.password);
       if (isPasswordMatch) {
         const token = this.tokenService.create(user);
         const userDto = this.modelToDto(user);

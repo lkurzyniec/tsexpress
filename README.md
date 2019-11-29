@@ -8,12 +8,19 @@ Source code based on [TypeScript Express tutorial](https://wanago.io/courses/typ
 * Express
 * TypeScript
 * ts-node-dev
-* InversifyJS as a DI container
+* InversifyJS
 * MongoDB with mongoose
 * dotenv and envalid
 * Swagger and SwaggerUI
 * express-validator, class-transformer, class-validator
 * bcrypt and jsonwebtoken
+* jest
+
+## What do I like in this solution
+
+* DI container (by InversifyJS) and injection of dependencies
+* modularity - build at the top of SOLID rules, lowly coupled
+* unit tests (by jest)
 
 ## Start
 

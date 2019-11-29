@@ -1,5 +1,4 @@
-import 'reflect-metadata';
-import { Container } from './../../src/configurations/inversify.config';
+import { Container } from '../../src/configurations/inversify.config';
 import { interfaces } from 'inversify';
 
 export class TestContainer extends Container {
