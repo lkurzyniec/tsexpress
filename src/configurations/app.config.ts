@@ -6,6 +6,7 @@ import { isNullOrWhitespace } from './../helpers/string.helper';
 @injectable()
 export class AppConfig {
   public readonly sourcePath: string = './src';
+  public readonly apiPath: string = '/api';
 
   private _mongoUser: string;
   public get mongoUser(): string {

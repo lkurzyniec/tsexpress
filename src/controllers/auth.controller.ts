@@ -1,3 +1,4 @@
+import { AppConfig } from './../configurations/app.config';
 import { ValidationError, ValidationErrorPlace } from './../errors/validation.error';
 import { AuthService, RegisterResult } from './../services/auth.service';
 import { RegisterRequestDto } from '../dtos/auth/register.request.dto';
@@ -9,7 +10,8 @@ import { StatusHelper } from '../helpers/status.helper';
 
 @injectable()
 export class AuthController extends BaseController {
-  @inject(AuthService) private auth: AuthService;
+  @inject(AuthService) private readonly auth: AuthService;
+  @inject(AppConfig) private readonly appConfig: AppConfig;
 
   constructor() {
     super('/auth', false);
@@ -37,7 +39,7 @@ export class AuthController extends BaseController {
     const dto = request.body as LoginRequestDto;
     const loginResult = await this.auth.login(dto);
     if (loginResult) {
-      response.setHeader('Set-Cookie', `Authorization=${loginResult.tokenInfo.token}; HttpOnly; Max-Age=${loginResult.tokenInfo.expiresIn}`);
+      response.setHeader('Set-Cookie', `Authorization=${loginResult.tokenInfo.token}; HttpOnly; Max-Age=${loginResult.tokenInfo.expiresIn}; Path=${this.appConfig.apiPath}`);
       response.send(loginResult.user);
       next();
       return;

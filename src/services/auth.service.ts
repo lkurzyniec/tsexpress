@@ -17,9 +17,9 @@ export enum RegisterResult {
 export class AuthService {
   private readonly salt = 10;
 
-  @inject(UsersRepository) private repo: UsersRepository;
-  @inject(TokenService) private tokenService: TokenService;
-  @inject(BcryptWrapper) private bcrypt: BcryptWrapper;
+  @inject(UsersRepository) private readonly repo: UsersRepository;
+  @inject(TokenService) private readonly tokenService: TokenService;
+  @inject(BcryptWrapper) private readonly bcrypt: BcryptWrapper;
 
   public async register(dto: RegisterRequestDto): Promise<RegisterResult> {
     const isEmailTaken = await this.repo.exists({ email: dto.email });

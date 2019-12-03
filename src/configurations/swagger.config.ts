@@ -8,7 +8,7 @@ import { Application, Router } from 'express';
 export class SwaggerConfig {
   @inject(AppConfig) private readonly appConfig: AppConfig;
 
-  public initialize(baseApiPath: string, app: Application) {
+  public initialize(app: Application) {
     const options = {
       swaggerDefinition: {
         info: {
@@ -21,7 +21,7 @@ export class SwaggerConfig {
         },
         schemes: ['http'],
         host: `${this.appConfig.applicationHost}:${this.appConfig.applicationPort}`,
-        basePath: baseApiPath
+        basePath: this.appConfig.apiPath,
       },
       apis: [
         `${this.appConfig.sourcePath}/controllers/*.controller.ts`,

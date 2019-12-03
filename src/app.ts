@@ -19,7 +19,6 @@ import { AddressInfo } from 'net';
 
 @injectable()
 export class App {
-  private readonly apiPath = '/api';
   private app: express.Application = express();
   private isInitialized: boolean = false;
 
@@ -54,7 +53,7 @@ export class App {
       const addressInfo = server.address() as AddressInfo;
       this.appConfig.setApplicationHost(addressInfo.address);
 
-      this.swaggerConfig.initialize(this.apiPath, this.app);
+      this.swaggerConfig.initialize(this.app);
 
       this.appLogger.info(`Listening at 'http://${this.appConfig.applicationHost}:${this.appConfig.applicationPort}'.`);
     });
@@ -79,8 +78,8 @@ export class App {
 
     this.controllers.forEach((controller: BaseController) => {
       controller.initializeRoutes();
-      this.app.use(this.apiPath, controller.router);
-      this.appLogger.debug(`Registered '${controller.path}' path.`);
+      this.app.use(this.appConfig.apiPath, controller.router);
+      this.appLogger.debug(`Registered '${this.appConfig.apiPath}${controller.path}' path.`);
     });
   }
 

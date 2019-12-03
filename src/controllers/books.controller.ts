@@ -7,7 +7,7 @@ import { StatusHelper } from './../helpers/status.helper';
 
 @injectable()
 export class BooksController extends BaseController {
-  @inject(BooksService) private service: BooksService;
+  @inject(BooksService) private readonly service: BooksService;
 
   constructor() {
     super('/books');

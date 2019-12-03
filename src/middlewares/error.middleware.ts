@@ -4,7 +4,7 @@ import { injectable, inject } from 'inversify';
 
 @injectable()
 export class ErrorMiddleware {
-  @inject(ErrorExtractor) private errorHelper: ErrorExtractor;
+  @inject(ErrorExtractor) private readonly errorHelper: ErrorExtractor;
 
   public handle(error: any, request: Request, response: Response, next: NextFunction): void {
     const result = this.errorHelper.extract(error);

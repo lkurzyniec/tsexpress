@@ -5,7 +5,7 @@ import { AuthorResponseDto, AuthorRequestDto } from './../dtos/author/author.dto
 
 @injectable()
 export class AuthorsService {
-  @inject(AuthorsRepository) private repo: AuthorsRepository;
+  @inject(AuthorsRepository) private readonly repo: AuthorsRepository;
 
   public async getAll(): Promise<AuthorResponseDto[]> {
     const authors = await this.repo.getAll({ fullName: 'asc' });

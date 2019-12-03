@@ -15,7 +15,7 @@ export class SecretsProvider {
   }
 
   constructor(
-    @inject(AppConfig) private appConfig: AppConfig
+    @inject(AppConfig) private readonly appConfig: AppConfig
   ) {
     this._privateKey = readFileSync(`${appConfig.sourcePath}/services/token/private.key`, 'utf8');
     this._publicKey = readFileSync(`${appConfig.sourcePath}/services/token/public.key`, 'utf8');

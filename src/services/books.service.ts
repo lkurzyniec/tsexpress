@@ -7,7 +7,7 @@ import { inject, injectable } from 'inversify';
 
 @injectable()
 export class BooksService {
-  @inject(BooksRepository) private repo: BooksRepository;
+  @inject(BooksRepository) private readonly repo: BooksRepository;
 
   public async getAll(): Promise<BookResponseDto[]> {
     const books = await this.repo.getAll();
