@@ -33,11 +33,6 @@ export abstract class BaseController {
 
   private authenticate(): RequestHandler {
     return (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
-      if (request.method === 'GET') {
-        next();
-        return;
-      }
-
       this.authMiddleware.handle(request, response, next);
     };
   }

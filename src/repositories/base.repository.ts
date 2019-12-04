@@ -23,8 +23,8 @@ export abstract class BaseRepository<TModel>{
     return this.mongooseModel.exists(conditions);
   }
 
-  public getAll(sort?: Partial<TModel>): Promise<TModel[]> {
-    const query = this.mongooseModel.find();
+  public getAll(conditions?: Partial<TModel>, sort?: Partial<TModel>): Promise<TModel[]> {
+    const query = this.mongooseModel.find(conditions);
     if (sort) {
       query.sort(sort);
     }

@@ -1,5 +1,3 @@
-import { HelloController } from './controllers/hello.controller';
-import 'reflect-metadata';
 import { RequestLoggerMiddleware } from './middlewares/request-logger.middleware';
 import { ResponseLoggerMiddleware } from './middlewares/response-logger.middleware';
 import { AppLogger } from './loggers/app.logger';
@@ -8,7 +6,6 @@ import { DevError } from './errors/dev.error';
 import { AppConfig } from './configurations/app.config';
 import { BaseController } from './controllers/base.controller';
 import { ErrorMiddleware } from './middlewares/error.middleware';
-import { SwaggerConfig } from './configurations/swagger.config';
 import * as cookieParser from 'cookie-parser';
 import * as express from 'express';
 import * as helmet from 'helmet';
@@ -25,7 +22,6 @@ export class App {
   @inject(AppConfig) private readonly appConfig: AppConfig;
   @multiInject(BaseController) private controllers: BaseController[];
   @inject(MongoDbConnector) private readonly dbConnector: MongoDbConnector;
-  @inject(SwaggerConfig) private readonly swaggerConfig: SwaggerConfig;
   @inject(AppLogger) private readonly appLogger: AppLogger;
   @inject(ErrorMiddleware) private readonly errorMiddleware: ErrorMiddleware;
   @inject(RequestLoggerMiddleware) private readonly requestLoggerMiddleware: RequestLoggerMiddleware;
@@ -52,8 +48,6 @@ export class App {
     const server = this.app.listen(this.appConfig.applicationPort, () => {
       const addressInfo = server.address() as AddressInfo;
       this.appConfig.setApplicationHost(addressInfo.address);
-
-      this.swaggerConfig.initialize(this.app);
 
       this.appLogger.info(`Listening at 'http://${this.appConfig.applicationHost}:${this.appConfig.applicationPort}'.`);
     });

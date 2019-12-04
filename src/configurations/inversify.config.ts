@@ -1,43 +1,37 @@
+import { PartnersRepository } from './../repositories/partners.repository';
+import { PartnersService } from './../services/partners.service';
 import { JwtWrapper } from './../wrappers/jwt.wrapper';
 import { BcryptWrapper } from './../wrappers/bcrypt.wrapper';
 import { AuthLogger } from './../loggers/auth.logger';
 import { AuthMiddleware } from './../middlewares/auth.middleware';
-import { BooksService } from '../services/books.service';
-import { AuthorsService } from './../services/authors.service';
-import { SecretsProvider } from '../services/token/secrets.provider';
-import { TokenService } from '../services/token/token.service';
+import { SecretsProvider } from './../services/token/secrets.provider';
+import { TokenService } from './../services/token/token.service';
 import { AuthService } from './../services/auth.service';
 import { UserModel } from './../models/user.model';
 import { UsersRepository } from './../repositories/users.repository';
 import { AuthController } from './../controllers/auth.controller';
-import { ErrorExtractor } from '../helpers/error-extractor.helper';
+import { ErrorExtractor } from './../helpers/error-extractor.helper';
 import { ValidationHandler } from './../handlers/validation.handler';
 import { ResponseLoggerMiddleware } from './../middlewares/response-logger.middleware';
 import { ResponseLogger } from './../loggers/response.logger';
-import { ErrorMiddleware } from '../middlewares/error.middleware';
-import { RequestLoggerMiddleware } from '../middlewares/request-logger.middleware';
+import { ErrorMiddleware } from './../middlewares/error.middleware';
+import { RequestLoggerMiddleware } from './../middlewares/request-logger.middleware';
 import { RequestLogger } from './../loggers/request.logger';
 import { Container as InversifyContainer, interfaces, ContainerModule } from 'inversify';
 import { AppLogger } from './../loggers/app.logger';
-import { BookModel } from './../models/book.model';
-import { AuthorModel } from './../models/author.model';
-import { AuthorsRepository } from './../repositories/authors.repository';
-import { AuthorsController } from './../controllers/authors.controller';
-import { HelloController } from './../controllers/hello.controller';
+import { PartnerModel } from './../models/partner.model';
+import { PartnersController } from './../controllers/partners.controller';
 import { MongoDbConnector } from './../connectors/mongodb.connector';
 import { App } from './../app';
 import { AppConfig } from './app.config';
 import { BaseController } from './../controllers/base.controller';
-import { BooksController } from './../controllers/books.controller';
-import { BooksRepository } from './../repositories/books.repository';
-import { SwaggerConfig } from './swagger.config';
 
 // more info: https://github.com/inversify/InversifyJS/tree/master/wiki
 
 export class Container {
   private _container: InversifyContainer = new InversifyContainer();
 
-  protected get container() : InversifyContainer {
+  protected get container(): InversifyContainer {
     return this._container;
   }
 
@@ -58,10 +52,10 @@ export class Container {
   }
 
   private register(): void {
+    this._container.load(this.getRepositoriesModule());
     this._container.load(this.getLoggersModule());
     this._container.load(this.getMiddlewaresModule());
     this._container.load(this.getGeneralModule());
-    this._container.load(this.getRepositoriesModule());
     this._container.load(this.getControllersModule());
     this._container.load(this.getHelpersModule());
     this._container.load(this.getServicesModule());
@@ -72,17 +66,22 @@ export class Container {
 
   private getControllersModule(): ContainerModule {
     return new ContainerModule((bind: interfaces.Bind) => {
-      bind<BaseController>(BaseController).to(BooksController);
-      bind<BaseController>(BaseController).to(AuthorsController);
+      bind<BaseController>(BaseController).to(PartnersController);
       bind<BaseController>(BaseController).to(AuthController);
-      bind<BaseController>(BaseController).to(HelloController);
+    });
+  }
+
+  private getServicesModule(): ContainerModule {
+    return new ContainerModule((bind: interfaces.Bind) => {
+      bind<AuthService>(AuthService).toSelf();
+      bind<TokenService>(TokenService).toSelf();
+      bind<PartnersService>(PartnersService).toSelf();
     });
   }
 
   private getRepositoriesModule(): ContainerModule {
     return new ContainerModule((bind: interfaces.Bind) => {
-      bind<AuthorsRepository>(AuthorsRepository).toConstantValue(new AuthorsRepository(AuthorModel));
-      bind<BooksRepository>(BooksRepository).toConstantValue(new BooksRepository(BookModel));
+      bind<PartnersRepository>(PartnersRepository).toConstantValue(new PartnersRepository(PartnerModel));
       bind<UsersRepository>(UsersRepository).toConstantValue(new UsersRepository(UserModel));
     });
   }
@@ -108,7 +107,6 @@ export class Container {
   private getGeneralModule(): ContainerModule {
     return new ContainerModule((bind: interfaces.Bind) => {
       bind<AppConfig>(AppConfig).toSelf().inSingletonScope();
-      bind<SwaggerConfig>(SwaggerConfig).toSelf();
       bind<MongoDbConnector>(MongoDbConnector).toSelf();
       bind<ValidationHandler>(ValidationHandler).toSelf();
     });
@@ -118,15 +116,6 @@ export class Container {
     return new ContainerModule((bind: interfaces.Bind) => {
       bind<ErrorExtractor>(ErrorExtractor).toSelf();
       bind<SecretsProvider>(SecretsProvider).toSelf().inSingletonScope();
-    });
-  }
-
-  private getServicesModule(): ContainerModule {
-    return new ContainerModule((bind: interfaces.Bind) => {
-      bind<AuthService>(AuthService).toSelf();
-      bind<TokenService>(TokenService).toSelf();
-      bind<AuthorsService>(AuthorsService).toSelf();
-      bind<BooksService>(BooksService).toSelf();
     });
   }
 
