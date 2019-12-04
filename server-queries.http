@@ -20,7 +20,6 @@ GET {{apiUrl}}/hello/secret
 # ================= AUTH ======================= #
 
 ### LOGIN
-// @name login
 POST {{apiUrl}}/auth/login
 content-type: application/json
 
@@ -28,8 +27,6 @@ content-type: application/json
   "email": "sample.email@address.pl",
   "password": "wiezA123"
 }
-
-@authCookie = {{login.response.headers.Set-Cookie}}
 
 ### REGISTER
 POST {{apiUrl}}/auth/register
@@ -61,7 +58,6 @@ GET {{apiUrl}}/authors/{{authors.response.body.$.[0].id}}/books
 // @name author
 POST {{apiUrl}}/authors
 content-type: application/json
-Cookie: Authorization={{authCookie}}
 
 {
   "fullName": "Daniel Brown"
@@ -71,7 +67,6 @@ Cookie: Authorization={{authCookie}}
 // @name author
 PUT {{apiUrl}}/authors/{{author.response.body.$.id}}
 content-type: application/json
-Cookie: Authorization={{authCookie}}
 
 {
   "fullName": "Daniel Gerhard Brown"
@@ -79,7 +74,6 @@ Cookie: Authorization={{authCookie}}
 
 ### DELETE
 DELETE {{apiUrl}}/authors/{{author.response.body.$.id}}
-Cookie: Authorization={{authCookie}}
 
 # ================= BOOKS ======================= #
 
@@ -95,7 +89,6 @@ GET {{apiUrl}}/books/{{books.response.body.$.[0].id}}
 // @name book
 POST {{apiUrl}}/books
 content-type: application/json
-Cookie: Authorization={{authCookie}}
 
 {
   "title": "Doctor Sleep",
@@ -109,7 +102,6 @@ Cookie: Authorization={{authCookie}}
 // @name book
 PATCH  {{apiUrl}}/books/{{book.response.body.$.id}}
 content-type: application/json
-Cookie: Authorization={{authCookie}}
 
 {
   "title": "Doctor Sleep {{$randomInt 0 100}}"
@@ -117,4 +109,3 @@ Cookie: Authorization={{authCookie}}
 
 ### DELETE
 DELETE {{apiUrl}}/books/{{book.response.body.$.id}}
-Cookie: Authorization={{authCookie}}

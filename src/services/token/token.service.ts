@@ -33,10 +33,6 @@ export class TokenService {
   }
 
   public verify(token: string): TokenData {
-    if (this.appConfig.debug) {
-      token = token.replace('Authorization=', '').replace(`; HttpOnly; Max-Age=${this.appConfig.tokenExpirationInMin * 60}`, '');
-    }
-
     try {
       const options = {
         algorithms: ['RS256'],
