@@ -40,6 +40,20 @@ POST {{apiUrl}}/partners
 content-type: application/json
 
 {
+  "name": "ABC Company 2",
+  "taxNumber": "78912311222",
+  "address": {
+    "street": "Some street",
+    "city": "Some city"
+  }
+}
+
+### UPDATE
+// @name partner
+PUT {{apiUrl}}/partners/{{partner.response.body.$.id}}
+content-type: application/json
+
+{
   "name": "ABC Company",
   "taxNumber": "7891231122",
   "address": {

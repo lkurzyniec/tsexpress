@@ -1,3 +1,4 @@
+import { User } from './../models/user.model';
 import { Partner } from './../models/partner.model';
 import { PartnersRepository } from './../repositories/partners.repository';
 import { inject, injectable } from 'inversify';
@@ -10,15 +11,15 @@ import { Address } from './../models/address.model';
 export class PartnersService extends BaseService<PartnerResponseDto, PartnerRequestDto, Partner> {
   @inject(PartnersRepository) protected readonly repo: PartnersRepository;
 
-  public async getAll(userId: string): Promise<PartnerResponseDto[]> {
-    const data = await this.repo.getAll({ userId }, { name: 'asc' });
+  public async getAll(user: string): Promise<PartnerResponseDto[]> {
+    const data = await this.repo.getAll({ user }, { name: 'asc' });
     const result = data.map((item) => this.modelToDto(item));
     return result;
   }
 
-  public async findById(id: string, userId: string): Promise<PartnerResponseDto> {
+  public async findById(id: string, user: string): Promise<PartnerResponseDto> {
     const partner = await this.repo.findById(id);
-    if (partner && partner.userId === userId) {
+    if (partner && partner.user == user) {
       return this.modelToDto(partner);
     }
     return null;
@@ -26,15 +27,17 @@ export class PartnersService extends BaseService<PartnerResponseDto, PartnerRequ
 
   public async create(dto: PartnerRequestDto, userId: string): Promise<PartnerResponseDto> {
     let model = this.dtoToModel(dto);
-    model.userId = userId;
+    model.user = new User({
+      _id: userId
+    });
 
     model = await this.repo.create(model);
     const result = this.modelToDto(model);
     return result;
   }
 
-  public async update(id: string, dto: PartnerRequestDto, userId: string): Promise<PartnerResponseDto> {
-    const exist = await this.repo.exists({ _id: id, userId });
+  public async update(id: string, dto: PartnerRequestDto, user: string): Promise<PartnerResponseDto> {
+    const exist = await this.repo.exists({ _id: id, user });
     if (!exist) {
       return null;
     }
@@ -44,8 +47,8 @@ export class PartnersService extends BaseService<PartnerResponseDto, PartnerRequ
     return this.modelToDto(model);
   }
 
-  public async delete(id: string, userId: string): Promise<boolean> {
-    const exist = await this.repo.exists({ _id: id, userId });
+  public async delete(id: string, user: string): Promise<boolean> {
+    const exist = await this.repo.exists({ _id: id, user });
     if (!exist) {
       return null;
     }

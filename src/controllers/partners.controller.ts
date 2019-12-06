@@ -1,10 +1,12 @@
-import { AuthenticatedRequest } from '../interfaces/authenticated.request';
+import { ValidationError, ValidationErrorPlace } from './../errors/validation.error';
+import { AuthenticatedRequest } from './../interfaces/authenticated.request';
 import { PartnersService } from './../services/partners.service';
-import { PartnerRequestDto } from '../dtos/partner/partner.dto';
+import { PartnerRequestDto } from './../dtos/partner/partner.dto';
 import { injectable, inject } from 'inversify';
 import { BaseController } from './base.controller';
 import { Response, NextFunction } from "express";
-import { StatusHelper } from '../helpers/status.helper';
+import { StatusHelper } from './../helpers/status.helper';
+import { isNullOrWhitespace } from './../helpers/string.helper';
 
 @injectable()
 export class PartnersController extends BaseController {
@@ -49,6 +51,13 @@ export class PartnersController extends BaseController {
 
   private create = async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
     const dto = request.body as PartnerRequestDto;
+
+    const uniqueError = await this.service.isUnique(['name', 'taxNumber'], dto, request.auth.userId);
+    if (!isNullOrWhitespace(uniqueError)) {
+      next(new ValidationError(ValidationErrorPlace.Body, [uniqueError]));
+      return;
+    }
+
     this.service.create(dto, request.auth.userId)
       .then((data) => {
         response
@@ -63,6 +72,13 @@ export class PartnersController extends BaseController {
   private update = async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
     const id = request.params.id;
     const dto = request.body as PartnerRequestDto;
+
+    const uniqueError = await this.service.isUnique(['name', 'taxNumber'], dto, request.auth.userId, id);
+    if (!isNullOrWhitespace(uniqueError)) {
+      next(new ValidationError(ValidationErrorPlace.Body, [uniqueError]));
+      return;
+    }
+
     this.service.update(id, dto, request.auth.userId)
       .then((data) => {
         if (data) {

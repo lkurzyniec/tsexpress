@@ -1,6 +1,7 @@
 import { Model, Document } from 'mongoose';
+import { BaseModel } from './../models/base.model';
 
-export abstract class BaseRepository<TModel>{
+export abstract class BaseRepository<TModel extends BaseModel>{
   constructor(
     private mongooseModel: Model<TModel & Document>
   ) {

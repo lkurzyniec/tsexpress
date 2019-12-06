@@ -10,7 +10,7 @@ export class ValidationHandler {
   public checkBody(type: any, skipMissingProperties = false): RequestHandler {
     return (request: Request, response: Response, next: NextFunction) => {
       if (Object.keys(request.body).length === 0) {
-        next(new ValidationError(ValidationErrorPlace.Body, ['Body of request is required']));
+        next(new ValidationError(ValidationErrorPlace.Body, ['Body of the request is required']));
         return;
       }
 
