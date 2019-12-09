@@ -1,3 +1,5 @@
+import { InvoicesRepository } from './../repositories/invoices.repository';
+import { InvoiceModel } from './../models/invoice.model';
 import { PartnersRepository } from './../repositories/partners.repository';
 import { PartnersService } from './../services/partners.service';
 import { JwtWrapper } from './../wrappers/jwt.wrapper';
@@ -21,10 +23,12 @@ import { Container as InversifyContainer, interfaces, ContainerModule } from 'in
 import { AppLogger } from './../loggers/app.logger';
 import { PartnerModel } from './../models/partner.model';
 import { PartnersController } from './../controllers/partners.controller';
+import { InvoicesController } from './../controllers/invoices.controller';
 import { MongoDbConnector } from './../connectors/mongodb.connector';
 import { App } from './../app';
 import { AppConfig } from './app.config';
 import { BaseController } from './../controllers/base.controller';
+import { InvoicesService } from './../services/invoices.service';
 
 // more info: https://github.com/inversify/InversifyJS/tree/master/wiki
 
@@ -66,6 +70,7 @@ export class Container {
 
   private getControllersModule(): ContainerModule {
     return new ContainerModule((bind: interfaces.Bind) => {
+      bind<BaseController>(BaseController).to(InvoicesController);
       bind<BaseController>(BaseController).to(PartnersController);
       bind<BaseController>(BaseController).to(AuthController);
     });
@@ -76,6 +81,7 @@ export class Container {
       bind<AuthService>(AuthService).toSelf();
       bind<TokenService>(TokenService).toSelf();
       bind<PartnersService>(PartnersService).toSelf();
+      bind<InvoicesService>(InvoicesService).toSelf();
     });
   }
 
@@ -83,6 +89,7 @@ export class Container {
     return new ContainerModule((bind: interfaces.Bind) => {
       bind<PartnersRepository>(PartnersRepository).toConstantValue(new PartnersRepository(PartnerModel));
       bind<UsersRepository>(UsersRepository).toConstantValue(new UsersRepository(UserModel));
+      bind<InvoicesRepository>(InvoicesRepository).toConstantValue(new InvoicesRepository(InvoiceModel));
     });
   }
 

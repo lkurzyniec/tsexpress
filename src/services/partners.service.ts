@@ -18,9 +18,9 @@ export class PartnersService extends BaseService<PartnerResponseDto, PartnerRequ
   }
 
   public async findById(id: string, user: string): Promise<PartnerResponseDto> {
-    const partner = await this.repo.findById(id);
-    if (partner && partner.user == user) {
-      return this.modelToDto(partner);
+    const data = await this.repo.findById(id);
+    if (data && data.user == user) {
+      return this.modelToDto(data);
     }
     return null;
   }

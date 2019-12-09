@@ -40,7 +40,7 @@ POST {{apiUrl}}/partners
 content-type: application/json
 
 {
-  "name": "ABC Company 2",
+  "name": "ABC Company",
   "taxNumber": "78912311222",
   "address": {
     "street": "Some street",
@@ -48,16 +48,41 @@ content-type: application/json
   }
 }
 
-### UPDATE
-// @name partner
-PUT {{apiUrl}}/partners/{{partner.response.body.$.id}}
+# ================= INVOICES ======================= #
+
+### GET all
+@withDeleted = 1
+// @name invoices
+GET {{apiUrl}}/invoices?withDeleted={{withDeleted}}
+
+### GET one
+// @name invoice
+GET {{apiUrl}}/invoices/{{invoices.response.body.$.[0].id}}
+
+### CREATE
+// @name invoice
+POST {{apiUrl}}/invoices
 content-type: application/json
 
 {
-  "name": "ABC Company",
-  "taxNumber": "7891231122",
-  "address": {
-    "street": "Some street",
-    "city": "Some city"
-  }
+  "number": "01/12/2019",
+  "invoiceDate": "{{$datetime iso8601}}",
+  "paymentDate": "{{$datetime iso8601 10 d}}",
+  "partnerId": "{{partner.response.body.$.id}}",
+  "invoiceItems": [
+    {
+      "name": "item 1",
+      "quantity": {{$randomInt 1 6}},
+      "unitPrice": "{{$randomInt 5 55}}.{{$randomInt 0 100}}"
+    },
+    {
+      "name": "item 2",
+      "quantity": {{$randomInt 2 10}},
+      "unitPrice": "{{$randomInt 1 35}}.{{$randomInt 0 100}}"
+    }
+  ]
 }
+
+### DELETE
+// @name invoice
+DELETE {{apiUrl}}/invoices/{{invoice.response.body.$.id}}
