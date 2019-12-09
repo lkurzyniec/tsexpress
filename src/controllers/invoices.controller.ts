@@ -1,3 +1,4 @@
+import { PartnersService } from './../services/partners.service';
 import { InvoiceRequestDto } from './../dtos/invoice/invoice.dto';
 import { InvoicesService } from './../services/invoices.service';
 import { ValidationError, ValidationErrorPlace } from '../errors/validation.error';
@@ -7,11 +8,11 @@ import { BaseController } from './base.controller';
 import { Response, NextFunction } from "express";
 import { StatusHelper } from '../helpers/status.helper';
 import { isNullOrWhitespace } from '../helpers/string.helper';
-import { Validator } from "class-validator";
 
 @injectable()
 export class InvoicesController extends BaseController {
   @inject(InvoicesService) private readonly service: InvoicesService;
+  @inject(PartnersService) private readonly partnersService: PartnersService;
 
   constructor() {
     super('/invoices');
@@ -26,9 +27,7 @@ export class InvoicesController extends BaseController {
   }
 
   private getAll = async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
-    let withDeleted = request.query.withDeleted || "false";
-    withDeleted = new Validator().isBooleanString(withDeleted) && withDeleted.toLowerCase() === "true" || withDeleted === "1";
-
+    const withDeleted = this.getBoolFromQuery(request, 'withDeleted');
     this.service.getAll(request.auth.userId, withDeleted)
       .then((data) => {
         response.send(data);
@@ -58,6 +57,16 @@ export class InvoicesController extends BaseController {
     const uniqueError = await this.service.isUnique(['number'], dto, request.auth.userId);
     if (!isNullOrWhitespace(uniqueError)) {
       next(new ValidationError(ValidationErrorPlace.Body, [uniqueError]));
+      return;
+    }
+
+    const partner = await this.partnersService.findById(dto.partnerId, request.auth.userId);
+    if (!partner) {
+      next(new ValidationError(ValidationErrorPlace.Body, ['partner does not exists']));
+      return;
+    }
+    if (partner.deleted) {
+      next(new ValidationError(ValidationErrorPlace.Body, ['partner deleted']));
       return;
     }
 

@@ -26,7 +26,8 @@ export class PartnersController extends BaseController {
   }
 
   private getAll = async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
-    this.service.getAll(request.auth.userId)
+    const withDeleted = this.getBoolFromQuery(request, 'withDeleted');
+    this.service.getAll(request.auth.userId, withDeleted)
       .then((data) => {
         response.send(data);
         next();

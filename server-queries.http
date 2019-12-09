@@ -27,8 +27,9 @@ POST {{apiUrl}}/auth/logout
 # ================= PARTNERS ======================= #
 
 ### GET all
+@deletedPartners = 0
 // @name partners
-GET {{apiUrl}}/partners
+GET {{apiUrl}}/partners?withDeleted={{deletedPartners}}
 
 ### GET one
 // @name partner
@@ -48,12 +49,15 @@ content-type: application/json
   }
 }
 
+### DELETE
+DELETE {{apiUrl}}/partners/{{partner.response.body.$.id}}
+
 # ================= INVOICES ======================= #
 
 ### GET all
-@withDeleted = 1
+@deletedInvoices = 1
 // @name invoices
-GET {{apiUrl}}/invoices?withDeleted={{withDeleted}}
+GET {{apiUrl}}/invoices?withDeleted={{deletedInvoices}}
 
 ### GET one
 // @name invoice
@@ -84,5 +88,4 @@ content-type: application/json
 }
 
 ### DELETE
-// @name invoice
 DELETE {{apiUrl}}/invoices/{{invoice.response.body.$.id}}

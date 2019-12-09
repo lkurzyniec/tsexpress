@@ -6,6 +6,7 @@ import { BaseModel } from './base.model';
 const partnerSchema = new Schema({
   name: { type: Schema.Types.String, required: true },
   taxNumber: { type: Schema.Types.String, required: true },
+  deleted: { type: Schema.Types.Boolean, required: true, default: false },
 
   address: addressSchema,
 
@@ -19,6 +20,7 @@ const partnerSchema = new Schema({
 export class Partner extends BaseModel {
   name: string;
   taxNumber: string;
+  deleted: boolean;
 
   address: Address;
 

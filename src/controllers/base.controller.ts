@@ -3,8 +3,9 @@ import { AuthMiddleware } from './../middlewares/auth.middleware';
 import { ValidationHandler } from './../handlers/validation.handler';
 import { isNullOrWhitespace } from './../helpers/string.helper';
 import { DevError } from './../errors/dev.error';
-import { Router, Response, NextFunction, RequestHandler } from 'express';
+import { Router, Request, Response, NextFunction, RequestHandler } from 'express';
 import { injectable, inject } from 'inversify';
+import { Validator } from "class-validator";
 
 @injectable()
 export abstract class BaseController {
@@ -29,6 +30,12 @@ export abstract class BaseController {
         .all(this.path, this.authenticate())
         .all(`${this.path}/*`, this.authenticate());
     }
+  }
+
+  protected getBoolFromQuery(request: Request, query: string): boolean {
+    let boolValue = request.query[query] || "false";
+    boolValue = new Validator().isBooleanString(boolValue) && (boolValue.toLowerCase() === "true" || boolValue === "1");
+    return boolValue;
   }
 
   private authenticate(): RequestHandler {

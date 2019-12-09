@@ -11,8 +11,18 @@ import { Address } from './../models/address.model';
 export class PartnersService extends BaseService<PartnerResponseDto, PartnerRequestDto, Partner> {
   @inject(PartnersRepository) protected readonly repo: PartnersRepository;
 
-  public async getAll(user: string): Promise<PartnerResponseDto[]> {
-    const data = await this.repo.getAll({ user }, { name: 'asc' });
+  public async getAll(user: string, withDeleted: boolean): Promise<PartnerResponseDto[]> {
+    let query = {
+      user,
+    } as any;
+    if (!withDeleted) {
+      query = {
+        user,
+        deleted: false,
+      };
+    }
+
+    const data = await this.repo.getAll(query, { name: 'asc' });
     const result = data.map((item) => this.modelToDto(item));
     return result;
   }
@@ -53,7 +63,12 @@ export class PartnersService extends BaseService<PartnerResponseDto, PartnerRequ
       return null;
     }
 
-    return this.repo.delete(id);
+    let model = new Partner({
+      _id: id,
+      deleted: true,
+    });
+    model = await this.repo.update(id, model);
+    return !!model;
   }
 
   protected modelToDto(model: Partner): PartnerResponseDto {
@@ -61,6 +76,7 @@ export class PartnersService extends BaseService<PartnerResponseDto, PartnerRequ
       id: model._id,
       name: model.name,
       taxNumber: model.taxNumber,
+      deleted: model.deleted,
 
       address: model.address ? new AddressResponseDto({
         street: model.address.street,
