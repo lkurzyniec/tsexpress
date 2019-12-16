@@ -8,7 +8,7 @@ export class ResponseLogger extends BaseLogger {
   public type: string = 'Response';
 
   public log(request: Request, response: Response, body?: any): void {
-    if (!request.path.startsWith('/swagger/')) {
+    if (!request.originalUrl.includes('swagger')) {
       this.debug(`${response.statusCode} ${STATUS_CODES[response.statusCode]} ${body}`);
     }
   }

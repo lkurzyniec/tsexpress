@@ -36,6 +36,28 @@ export class AuthController extends BaseController {
     throw new ValidationError(ValidationErrorPlace.Body, [result]);
   }
 
+  /**
+     * @swagger
+     * /auth/login/:
+     *    post:
+     *      tags:
+     *        - auth
+     *      description: Login user
+     *      produces:
+     *        - application/json
+     *      parameters:
+     *        - in: body
+     *          name: body
+     *          description: Login data (email and password)
+     *          required: true
+     *          schema:
+     *            $ref: '#/definitions/LoginRequestDto'
+     *      responses:
+     *        200:
+     *          description: Information of logged user
+     *        401:
+     *          description: Wrong login data
+     */
   private async login(request: BodyRequest<LoginRequestDto>, response: Response) {
     const dto = request.body;
     const loginResult = await this.auth.login(dto);
@@ -48,6 +70,17 @@ export class AuthController extends BaseController {
     throw StatusHelper.error401Unauthorized;
   }
 
+  /**
+     * @swagger
+     * /auth/logout/:
+     *    post:
+     *      tags:
+     *        - auth
+     *      summary: Logout currently logged user
+     *      responses:
+     *        204:
+     *          description: Successfully logged out
+     */
   private async logout(request: Request, response: Response) {
     response.setHeader('Set-Cookie', 'Authorization=; Max-Age=0');
     response.sendStatus(StatusHelper.status204NoContent);

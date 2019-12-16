@@ -13,17 +13,21 @@ export class ResponseLoggerMiddleware {
       chunks = [];
 
     response.write = function (chunk: any) {
-      chunks.push(chunk);
+      if (chunk instanceof Buffer) {
+        chunks.push(chunk);
+      }
       return originalWrite.apply(response, arguments);
     };
 
     response.end = function (chunk: any) {
-      if (chunk) {
-        chunks.push(chunk);
-      }
+      if (chunk instanceof Buffer) {
+        if (chunk) {
+          chunks.push(chunk);
+        }
 
-      const body = Buffer.concat(chunks).toString('utf8');
-      logger.log(request, response, body);
+        const body = Buffer.concat(chunks).toString('utf8');
+        logger.log(request, response, body);
+      }
 
       return originalEnd.apply(response, arguments);
     };

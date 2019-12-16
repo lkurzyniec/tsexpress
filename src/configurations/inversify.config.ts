@@ -29,6 +29,7 @@ import { App } from './../app';
 import { AppConfig } from './app.config';
 import { BaseController } from './../controllers/base.controller';
 import { InvoicesService } from './../services/invoices.service';
+import { SwaggerConfig } from './swagger.config';
 
 // more info: https://github.com/inversify/InversifyJS/tree/master/wiki
 
@@ -114,6 +115,7 @@ export class Container {
   private getGeneralModule(): ContainerModule {
     return new ContainerModule((bind: interfaces.Bind) => {
       bind<AppConfig>(AppConfig).toSelf().inSingletonScope();
+      bind<SwaggerConfig>(SwaggerConfig).toSelf();
       bind<MongoDbConnector>(MongoDbConnector).toSelf();
       bind<ValidationHandler>(ValidationHandler).toSelf();
     });
