@@ -8,24 +8,21 @@ import { param, validationResult } from 'express-validator';
 @injectable()
 export class ValidationHandler {
   public checkBody(type: any, skipMissingProperties = false): RequestHandler {
-    return (request: Request, response: Response, next: NextFunction) => {
+    return async (request: Request, response: Response, next: NextFunction) => {
       if (Object.keys(request.body).length === 0) {
-        next(new ValidationError(ValidationErrorPlace.Body, ['Body of the request is required']));
-        return;
+        throw new ValidationError(ValidationErrorPlace.Body, ['Body of the request is required']);
       }
 
       const dto = plainToClass(type, request.body);
       request.body = dto;
-      validate(dto, { validationError: { target: false }, skipMissingProperties })
-        .then((errors: Error[]) => {
-          if (errors.length > 0) {
-            const resultErrors = errors.map((item) => { return this.getError(item); });
-            next(new ValidationError(ValidationErrorPlace.Body, resultErrors));
-            return;
-          }
-          next();
-        })
-        .catch(next);
+
+      const errors = await validate(dto, { validationError: { target: false }, skipMissingProperties });
+      if (errors.length > 0) {
+        const resultErrors = errors.map((item) => { return this.getError(item); });
+        throw new ValidationError(ValidationErrorPlace.Body, resultErrors);
+      }
+
+      next();
     }
   }
 
@@ -35,9 +32,9 @@ export class ValidationHandler {
       const errors = validationResult(request);
       if (!errors.isEmpty()) {
         //const resultErrors = errors.array().map((item) => `${item.location.toUpperCase()} '${item.param}' ${item.msg}`);
-        next(new ValidationError(ValidationErrorPlace.Url, [`id URL param has invalid value`]));
-        return;
+        throw new ValidationError(ValidationErrorPlace.Url, [`id URL param has invalid value`]);
       }
+
       next();
     }
     return [validation, validationCheck];

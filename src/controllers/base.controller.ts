@@ -1,4 +1,4 @@
-import { AuthenticatedRequest } from './../interfaces/authenticated.request';
+import { AuthRequest } from '../interfaces/auth.request';
 import { AuthMiddleware } from './../middlewares/auth.middleware';
 import { ValidationHandler } from './../handlers/validation.handler';
 import { isNullOrWhitespace } from './../helpers/string.helper';
@@ -6,6 +6,7 @@ import { DevError } from './../errors/dev.error';
 import { Router, Request, Response, NextFunction, RequestHandler } from 'express';
 import { injectable, inject } from 'inversify';
 import { Validator } from "class-validator";
+import PromiseRouter from "express-promise-router";
 
 @injectable()
 export abstract class BaseController {
@@ -22,7 +23,7 @@ export abstract class BaseController {
       throw new DevError(`Parameter 'path' can not be empty.`);
     }
 
-    this.router = Router();
+    this.router = PromiseRouter();
     this.path = path;
 
     if (addAuth) {
@@ -39,7 +40,7 @@ export abstract class BaseController {
   }
 
   private authenticate(): RequestHandler {
-    return (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
+    return (request: AuthRequest, response: Response, next: NextFunction) => {
       this.authMiddleware.handle(request, response, next);
     };
   }

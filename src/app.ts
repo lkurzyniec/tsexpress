@@ -62,7 +62,9 @@ export class App {
     this.app.use(cors());
     this.app.use(cookieParser());
     this.app.use(express.json());
+
     this.app.use(this.requestLoggerMiddleware.handle.bind(this.requestLoggerMiddleware));
+    this.app.use(this.responseLoggerMiddleware.handle.bind(this.responseLoggerMiddleware));
   }
 
   private initializeControllers(): void {
@@ -73,12 +75,11 @@ export class App {
     this.controllers.forEach((controller: BaseController) => {
       controller.initializeRoutes();
       this.app.use(this.appConfig.apiPath, controller.router);
-      this.appLogger.debug(`Registered '${this.appConfig.apiPath}${controller.path}' path.`);
+      this.appLogger.debug(`Registered '${this.appConfig.apiPath}${controller.path}'.`);
     });
   }
 
   private initializePostMiddlewares(): void {
     this.app.use(this.errorMiddleware.handle.bind(this.errorMiddleware));
-    this.app.use(this.responseLoggerMiddleware.handle.bind(this.responseLoggerMiddleware));
   }
 }

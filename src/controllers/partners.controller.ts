@@ -1,12 +1,13 @@
 import { ValidationError, ValidationErrorPlace } from './../errors/validation.error';
-import { AuthenticatedRequest } from './../interfaces/authenticated.request';
+import { AuthRequest } from '../interfaces/auth.request';
 import { PartnersService } from './../services/partners.service';
 import { PartnerRequestDto } from './../dtos/partner/partner.dto';
 import { injectable, inject } from 'inversify';
 import { BaseController } from './base.controller';
-import { Response, NextFunction } from "express";
+import { Response } from "express";
 import { StatusHelper } from './../helpers/status.helper';
 import { isNullOrWhitespace } from './../helpers/string.helper';
+import { BodyRequest } from './../interfaces/body.request';
 
 @injectable()
 export class PartnersController extends BaseController {
@@ -18,93 +19,68 @@ export class PartnersController extends BaseController {
 
   public initializeRoutes(): void {
     this.router
-      .get(this.path, this.getAll)
-      .get(`${this.path}/:id`, this.validator.checkId(), this.getById)
-      .post(this.path, this.validator.checkBody(PartnerRequestDto), this.create)
-      .put(`${this.path}/:id`, this.validator.checkIdAndBody(PartnerRequestDto), this.update)
-      .delete(`${this.path}/:id`, this.validator.checkId(), this.delete);
+      .get(this.path, this.getAll.bind(this))
+      .get(`${this.path}/:id`, this.validator.checkId(), this.getById.bind(this))
+      .post(this.path, this.validator.checkBody(PartnerRequestDto), this.create.bind(this))
+      .put(`${this.path}/:id`, this.validator.checkIdAndBody(PartnerRequestDto), this.update.bind(this))
+      .delete(`${this.path}/:id`, this.validator.checkId(), this.delete.bind(this));
   }
 
-  private getAll = async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
+  private async getAll(request: AuthRequest, response: Response) {
     const withDeleted = this.getBoolFromQuery(request, 'withDeleted');
-    this.service.getAll(request.auth.userId, withDeleted)
-      .then((data) => {
-        response.send(data);
-        next();
-      })
-      .catch(next);
+    const data = await this.service.getAll(request.auth.userId, withDeleted);
+    response.send(data);
   }
 
-  private getById = async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
+  private async  getById(request: AuthRequest, response: Response) {
     const id = request.params.id;
-    this.service.findById(id, request.auth.userId)
-      .then((data) => {
-        if (data) {
-          response.send(data);
-        } else {
-          next(StatusHelper.error404NotFound);
-          return;
-        }
-        next();
-      })
-      .catch(next);
+    const data = await this.service.findById(id, request.auth.userId);
+    if (data) {
+      response.send(data);
+    } else {
+      throw StatusHelper.error404NotFound;
+    }
   }
 
-  private create = async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
-    const dto = request.body as PartnerRequestDto;
+  private async create(request: BodyRequest<PartnerRequestDto>, response: Response) {
+    const dto = request.body;
 
     const uniqueError = await this.service.isUnique(['name', 'taxNumber'], dto, request.auth.userId);
     if (!isNullOrWhitespace(uniqueError)) {
-      next(new ValidationError(ValidationErrorPlace.Body, [uniqueError]));
-      return;
+      throw new ValidationError(ValidationErrorPlace.Body, [uniqueError]);
     }
 
-    this.service.create(dto, request.auth.userId)
-      .then((data) => {
-        response
-          .location(`${this.path}/${data.id}`)
-          .status(StatusHelper.status201Created)
-          .send(data);
-        next();
-      })
-      .catch(next);
+    const data = await this.service.create(dto, request.auth.userId);
+    response
+      .location(`${this.path}/${data.id}`)
+      .status(StatusHelper.status201Created)
+      .send(data);
   }
 
-  private update = async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
+  private async update(request: BodyRequest<PartnerRequestDto>, response: Response) {
     const id = request.params.id;
-    const dto = request.body as PartnerRequestDto;
+    const dto = request.body;
 
     const uniqueError = await this.service.isUnique(['name', 'taxNumber'], dto, request.auth.userId, id);
     if (!isNullOrWhitespace(uniqueError)) {
-      next(new ValidationError(ValidationErrorPlace.Body, [uniqueError]));
-      return;
+      throw new ValidationError(ValidationErrorPlace.Body, [uniqueError]);
     }
 
-    this.service.update(id, dto, request.auth.userId)
-      .then((data) => {
-        if (data) {
-          response.send(data);
-        } else {
-          next(StatusHelper.error404NotFound);
-          return;
-        }
-        next();
-      })
-      .catch(next);
+    const data = await this.service.update(id, dto, request.auth.userId);
+    if (data) {
+      response.send(data);
+    } else {
+      throw StatusHelper.error404NotFound;
+    }
   }
 
-  private delete = async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
+  private async delete(request: AuthRequest, response: Response) {
     const id = request.params.id;
-    this.service.delete(id, request.auth.userId)
-      .then((deleted) => {
-        if (deleted) {
-          response.sendStatus(StatusHelper.status204NoContent);
-        } else {
-          next(StatusHelper.error404NotFound);
-          return;
-        }
-        next();
-      })
-      .catch(next);
+    const deleted = await this.service.delete(id, request.auth.userId);
+    if (deleted) {
+      response.sendStatus(StatusHelper.status204NoContent);
+    } else {
+      throw StatusHelper.error404NotFound;
+    }
   }
 }

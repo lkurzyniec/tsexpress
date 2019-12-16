@@ -5,8 +5,9 @@ import { RegisterRequestDto } from '../dtos/auth/register.request.dto';
 import { LoginRequestDto } from '../dtos/auth/login.request.dto';
 import { injectable, inject } from 'inversify';
 import { BaseController } from './base.controller';
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import { StatusHelper } from '../helpers/status.helper';
+import { BodyRequest } from './../interfaces/body.request';
 
 @injectable()
 export class AuthController extends BaseController {
@@ -18,39 +19,37 @@ export class AuthController extends BaseController {
   }
 
   public initializeRoutes(): void {
-    this.router.post(`${this.path}/register`, this.validator.checkBody(RegisterRequestDto), this.register);
-    this.router.post(`${this.path}/login`, this.validator.checkBody(LoginRequestDto), this.login);
-    this.router.post(`${this.path}/logout`, this.logout);
+    this.router
+      .post(`${this.path}/register`, this.validator.checkBody(RegisterRequestDto), this.register.bind(this))
+      .post(`${this.path}/login`, this.validator.checkBody(LoginRequestDto), this.login.bind(this))
+      .post(`${this.path}/logout`, this.logout.bind(this));
   }
 
-  private register = async (request: Request, response: Response, next: NextFunction) => {
-    const dto = request.body as RegisterRequestDto;
+  private async register(request: BodyRequest<RegisterRequestDto>, response: Response) {
+    const dto = request.body;
     const result = await this.auth.register(dto);
     if (result === RegisterResult.Success) {
       response.sendStatus(StatusHelper.status204NoContent);
-      next();
       return;
     }
 
-    next(new ValidationError(ValidationErrorPlace.Body, [result]));
+    throw new ValidationError(ValidationErrorPlace.Body, [result]);
   }
 
-  private login = async (request: Request, response: Response, next: NextFunction) => {
-    const dto = request.body as LoginRequestDto;
+  private async login(request: BodyRequest<LoginRequestDto>, response: Response) {
+    const dto = request.body;
     const loginResult = await this.auth.login(dto);
     if (loginResult) {
       response.setHeader('Set-Cookie', `Authorization=${loginResult.tokenInfo.token}; HttpOnly; Max-Age=${loginResult.tokenInfo.expiresIn}; Path=${this.appConfig.apiPath}`);
       response.send(loginResult.user);
-      next();
       return;
     }
 
-    next(StatusHelper.error401Unauthorized);
+    throw StatusHelper.error401Unauthorized;
   }
 
-  private logout = async (request: Request, response: Response, next: NextFunction) => {
+  private async logout(request: Request, response: Response) {
     response.setHeader('Set-Cookie', 'Authorization=; Max-Age=0');
     response.sendStatus(StatusHelper.status204NoContent);
-    next();
   }
 }

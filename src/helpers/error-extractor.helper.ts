@@ -2,7 +2,7 @@ import { HttpError } from './../errors/http.error';
 import { AppConfig } from '../configurations/app.config';
 import { ValidationError } from '../errors/validation.error';
 import { injectable, inject } from 'inversify';
-import * as statuses from 'statuses';
+import { STATUS_CODES } from 'statuses';
 
 export interface ErrorResult {
   status: number;
@@ -23,7 +23,7 @@ export class ErrorExtractor {
       status = error.status;
     }
 
-    let message = statuses[status];
+    let message = STATUS_CODES[status];
 
     let errors = null;
     if (error instanceof ValidationError) {
