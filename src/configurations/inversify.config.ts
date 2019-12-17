@@ -13,7 +13,6 @@ import { UserModel } from './../models/user.model';
 import { UsersRepository } from './../repositories/users.repository';
 import { AuthController } from './../controllers/auth.controller';
 import { ErrorExtractor } from './../helpers/error-extractor.helper';
-import { ValidationHandler } from './../handlers/validation.handler';
 import { ResponseLoggerMiddleware } from './../middlewares/response-logger.middleware';
 import { ResponseLogger } from './../loggers/response.logger';
 import { ErrorMiddleware } from './../middlewares/error.middleware';
@@ -117,7 +116,6 @@ export class Container {
       bind<AppConfig>(AppConfig).toSelf().inSingletonScope();
       bind<SwaggerConfig>(SwaggerConfig).toSelf();
       bind<MongoDbConnector>(MongoDbConnector).toSelf();
-      bind<ValidationHandler>(ValidationHandler).toSelf();
     });
   }
 

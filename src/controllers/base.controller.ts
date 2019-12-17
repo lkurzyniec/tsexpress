@@ -1,6 +1,5 @@
 import { AuthRequest } from '../interfaces/auth.request';
 import { AuthMiddleware } from './../middlewares/auth.middleware';
-import { ValidationHandler } from './../handlers/validation.handler';
 import { isNullOrWhitespace } from './../helpers/string.helper';
 import { DevError } from './../errors/dev.error';
 import { Router, Request, Response, NextFunction, RequestHandler } from 'express';
@@ -11,7 +10,6 @@ import PromiseRouter from "express-promise-router";
 @injectable()
 export abstract class BaseController {
   @inject(AuthMiddleware) private readonly authMiddleware: AuthMiddleware;
-  @inject(ValidationHandler) protected readonly validator: ValidationHandler;
 
   public readonly path: string;
   public readonly router: Router;
@@ -33,10 +31,10 @@ export abstract class BaseController {
     }
   }
 
-  protected getBoolFromQuery(request: Request, query: string): boolean {
-    let boolValue = request.query[query] || "false";
-    boolValue = new Validator().isBooleanString(boolValue) && (boolValue.toLowerCase() === "true" || boolValue === "1");
-    return boolValue;
+  protected getBoolFromQueryParams(request: Request, queryParam: string): boolean {
+    const paramValue = request.query[queryParam] || "false";
+    const value = new Validator().isBooleanString(paramValue) && (paramValue.toLowerCase() === "true" || paramValue === "1");
+    return value;
   }
 
   private authenticate(): RequestHandler {

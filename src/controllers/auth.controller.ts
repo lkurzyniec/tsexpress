@@ -8,6 +8,7 @@ import { BaseController } from './base.controller';
 import { Request, Response } from "express";
 import { StatusHelper } from '../helpers/status.helper';
 import { BodyRequest } from './../interfaces/body.request';
+import { DtoValidator } from './../decorators/dto-validator.decorator';
 
 @injectable()
 export class AuthController extends BaseController {
@@ -20,20 +21,22 @@ export class AuthController extends BaseController {
 
   public initializeRoutes(): void {
     this.router
-      .post(`${this.path}/register`, this.validator.checkBody(RegisterRequestDto), this.register.bind(this))
-      .post(`${this.path}/login`, this.validator.checkBody(LoginRequestDto), this.login.bind(this))
+      .post(`${this.path}/register`, this.register.bind(this))
+      .post(`${this.path}/login`, this.login.bind(this))
       .post(`${this.path}/logout`, this.logout.bind(this));
   }
 
+  @DtoValidator(RegisterRequestDto)
   private async register(request: BodyRequest<RegisterRequestDto>, response: Response) {
     const dto = request.body;
+
     const result = await this.auth.register(dto);
     if (result === RegisterResult.Success) {
       response.sendStatus(StatusHelper.status204NoContent);
       return;
     }
 
-    throw new ValidationError(ValidationErrorPlace.Body, [result]);
+    throw new ValidationError(ValidationErrorPlace.Body, result);
   }
 
   /**
@@ -58,8 +61,10 @@ export class AuthController extends BaseController {
      *        401:
      *          description: Wrong login data
      */
+  @DtoValidator(LoginRequestDto)
   private async login(request: BodyRequest<LoginRequestDto>, response: Response) {
     const dto = request.body;
+
     const loginResult = await this.auth.login(dto);
     if (loginResult) {
       response.setHeader('Set-Cookie', `Authorization=${loginResult.tokenInfo.token}; HttpOnly; Max-Age=${loginResult.tokenInfo.expiresIn}; Path=${this.appConfig.apiPath}`);

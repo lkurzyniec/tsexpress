@@ -17,7 +17,7 @@ Source code based on [TypeScript Express tutorial](https://wanago.io/courses/typ
 * express-validator, class-transformer, class-validator
 * express-promise-router
 * bcrypt and jsonwebtoken
-* jest
+* jest (unit tests)
 
 ## What I like in this solution
 

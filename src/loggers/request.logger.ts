@@ -8,10 +8,10 @@ export class RequestLogger extends BaseLogger {
 
   public log(request: Request): void {
     if (!request.path.startsWith('/swagger/')) {
-      let query = '\n';
+      let query = '';
       for (var propName in request.query) {
         if (request.query.hasOwnProperty(propName)) {
-          query += `${propName}:${request.query[propName]}\n`;
+          query += `'${propName}:${request.query[propName]}' `;
         }
       }
 
