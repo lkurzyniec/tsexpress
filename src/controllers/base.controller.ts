@@ -1,15 +1,15 @@
-import { AuthenticatedRequest } from './../interfaces/authenticated.request';
+import { AuthRequest } from '../interfaces/auth.request';
 import { AuthMiddleware } from './../middlewares/auth.middleware';
-import { ValidationHandler } from './../handlers/validation.handler';
 import { isNullOrWhitespace } from './../helpers/string.helper';
 import { DevError } from './../errors/dev.error';
-import { Router, Response, NextFunction, RequestHandler } from 'express';
+import { Router, Request, Response, NextFunction, RequestHandler } from 'express';
 import { injectable, inject } from 'inversify';
+import { Validator } from "class-validator";
+import PromiseRouter from "express-promise-router";
 
 @injectable()
 export abstract class BaseController {
   @inject(AuthMiddleware) private readonly authMiddleware: AuthMiddleware;
-  @inject(ValidationHandler) protected readonly validator: ValidationHandler;
 
   public readonly path: string;
   public readonly router: Router;
@@ -21,7 +21,7 @@ export abstract class BaseController {
       throw new DevError(`Parameter 'path' can not be empty.`);
     }
 
-    this.router = Router();
+    this.router = PromiseRouter();
     this.path = path;
 
     if (addAuth) {
@@ -31,13 +31,14 @@ export abstract class BaseController {
     }
   }
 
-  private authenticate(): RequestHandler {
-    return (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
-      if (request.method === 'GET') {
-        next();
-        return;
-      }
+  protected getBoolFromQueryParams(request: Request, queryParam: string): boolean {
+    const paramValue = request.query[queryParam] || "false";
+    const value = new Validator().isBooleanString(paramValue) && (paramValue.toLowerCase() === "true" || paramValue === "1");
+    return value;
+  }
 
+  private authenticate(): RequestHandler {
+    return (request: AuthRequest, response: Response, next: NextFunction) => {
       this.authMiddleware.handle(request, response, next);
     };
   }

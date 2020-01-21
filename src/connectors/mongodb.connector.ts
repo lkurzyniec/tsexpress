@@ -35,10 +35,4 @@ export class MongoDbConnector {
 
     mongoose.set('debug', this.appConfig.debug);
   }
-
-  public static globalSchemaOptions(): mongoose.SchemaOptions {
-    return {
-      // ...
-    };
-  }
 }

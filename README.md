@@ -11,10 +11,13 @@ Source code based on [TypeScript Express tutorial](https://wanago.io/courses/typ
 * InversifyJS
 * MongoDB with mongoose
 * dotenv and envalid
+* cors and helmet
+* cookie-parser and json-ignore
 * Swagger and SwaggerUI
 * express-validator, class-transformer, class-validator
+* express-promise-router
 * bcrypt and jsonwebtoken
-* jest
+* jest (unit tests)
 
 ## What I like in this solution
 

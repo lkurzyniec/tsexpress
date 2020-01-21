@@ -1,22 +1,5 @@
 @apiUrl = http://localhost:5000/api
 
-# ================= HELLO ======================= #
-
-### Hello
-GET {{apiUrl}}/hello
-
-### Hello POST
-POST {{apiUrl}}/hello
-content-type: application/json
-
-{
-  "firstName": "Łukasz",
-  "lastName": "K."
-}
-
-### Hello Secret
-GET {{apiUrl}}/hello/secret
-
 # ================= AUTH ======================= #
 
 ### LOGIN
@@ -41,71 +24,68 @@ content-type: application/json
 ### LOGOUT
 POST {{apiUrl}}/auth/logout
 
-# ================= AUTHORS ======================= #
+# ================= PARTNERS ======================= #
 
 ### GET all
-// @name authors
-GET {{apiUrl}}/authors
+@deletedPartners = 0
+// @name partners
+GET {{apiUrl}}/partners?withDeleted={{deletedPartners}}
 
 ### GET one
-// @name author
-GET {{apiUrl}}/authors/{{authors.response.body.$.[0].id}}
-
-### GET author books
-GET {{apiUrl}}/authors/{{authors.response.body.$.[0].id}}/books
+// @name partner
+GET {{apiUrl}}/partners/{{partners.response.body.$.[0].id}}
 
 ### CREATE
-// @name author
-POST {{apiUrl}}/authors
+// @name partner
+POST {{apiUrl}}/partners
 content-type: application/json
 
 {
-  "fullName": "Daniel Brown"
-}
-
-### UPDATE
-// @name author
-PUT {{apiUrl}}/authors/{{author.response.body.$.id}}
-content-type: application/json
-
-{
-  "fullName": "Daniel Gerhard Brown"
-}
-
-### DELETE
-DELETE {{apiUrl}}/authors/{{author.response.body.$.id}}
-
-# ================= BOOKS ======================= #
-
-### GET all
-// @name books
-GET {{apiUrl}}/books
-
-### GET one
-// @name book
-GET {{apiUrl}}/books/{{books.response.body.$.[0].id}}
-
-### CREATE
-// @name book
-POST {{apiUrl}}/books
-content-type: application/json
-
-{
-  "title": "Doctor Sleep",
-  "authorId": "{{author.response.body.$.id}}",
-  "publisher": {
-    "name": "Scribner"
+  "name": "ABC Company",
+  "taxNumber": "78912311222",
+  "address": {
+    "street": "Some street",
+    "city": "Some city"
   }
 }
 
-### UPDATE
-// @name book
-PATCH  {{apiUrl}}/books/{{book.response.body.$.id}}
+### DELETE
+DELETE {{apiUrl}}/partners/{{partner.response.body.$.id}}
+
+# ================= INVOICES ======================= #
+
+### GET all
+@deletedInvoices = 1
+// @name invoices
+GET {{apiUrl}}/invoices?withDeleted={{deletedInvoices}}
+
+### GET one
+// @name invoice
+GET {{apiUrl}}/invoices/{{invoices.response.body.$.[0].id}}
+
+### CREATE
+// @name invoice
+POST {{apiUrl}}/invoices
 content-type: application/json
 
 {
-  "title": "Doctor Sleep {{$randomInt 0 100}}"
+  "number": "01/12/2019",
+  "invoiceDate": "{{$datetime iso8601}}",
+  "paymentDate": "{{$datetime iso8601 10 d}}",
+  "partnerId": "{{partner.response.body.$.id}}",
+  "invoiceItems": [
+    {
+      "name": "item 1",
+      "quantity": {{$randomInt 1 6}},
+      "unitPrice": "{{$randomInt 5 55}}.{{$randomInt 0 100}}"
+    },
+    {
+      "name": "item 2",
+      "quantity": {{$randomInt 2 10}},
+      "unitPrice": "{{$randomInt 1 35}}.{{$randomInt 0 100}}"
+    }
+  ]
 }
 
 ### DELETE
-DELETE {{apiUrl}}/books/{{book.response.body.$.id}}
+DELETE {{apiUrl}}/invoices/{{invoice.response.body.$.id}}

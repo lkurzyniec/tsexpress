@@ -12,7 +12,7 @@ export class SwaggerConfig {
     const options = {
       swaggerDefinition: {
         info: {
-          title: 'Very simple API in NodeJS and express',
+          title: 'Very simple API in NodeJS using express',
           version: '1.0.2',
           description: 'Made by Łukasz K.',
           contact: {
