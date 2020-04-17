@@ -1,7 +1,5 @@
 # tsexpress
 
-Source code based on [TypeScript Express tutorial](https://wanago.io/courses/typescript-express-tutorial/).
-
 ## Repository contains
 
 * NodeJS
@@ -55,6 +53,10 @@ APPLICATION_PORT=5000
 DEBUG=true
 TOKEN_EXPIRATION_IN_MIN=15
 ```
+
+### Instal dependencies
+
+Install dependencies executing `npm install`.
 
 ### Start the application
 
