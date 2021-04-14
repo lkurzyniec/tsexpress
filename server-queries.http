@@ -49,6 +49,16 @@ content-type: application/json
   }
 }
 
+### UPDATE
+// @name partner
+PUT {{apiUrl}}/partners/{{partners.response.body.$.[0].id}}
+content-type: application/json
+
+{
+  "name": "ABC Company {{$randomInt 1 20}}",
+  "taxNumber": "78912311221"
+}
+
 ### DELETE
 DELETE {{apiUrl}}/partners/{{partner.response.body.$.id}}
 

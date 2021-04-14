@@ -18,4 +18,4 @@ export class User extends BaseModel {
   }
 }
 
-export const UserModel = model<User & Document>('User', userSchema);
+export const UserModel = model<Document<User>>('User', userSchema);

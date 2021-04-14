@@ -28,6 +28,8 @@ export class AuthController extends BaseController {
 
   @DtoValidator(RegisterRequestDto)
   private async register(request: BodyRequest<RegisterRequestDto>, response: Response) {
+    response.setHeader('Set-Cookie', 'Authorization=; Max-Age=0');
+
     const dto = request.body;
 
     const result = await this.auth.register(dto);

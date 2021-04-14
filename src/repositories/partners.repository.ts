@@ -5,7 +5,7 @@ import { injectable } from "inversify";
 
 @injectable()
 export class PartnersRepository extends BaseRepository<Partner> {
-  constructor(mongooseModel: Model<Partner & Document>) {
+  constructor(mongooseModel: Model<Document<Partner>>) {
     super(mongooseModel);
   }
 }

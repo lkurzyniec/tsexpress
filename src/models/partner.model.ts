@@ -32,4 +32,4 @@ export class Partner extends BaseModel {
   }
 }
 
-export const PartnerModel = model<Partner & Document>('Partner', partnerSchema);
+export const PartnerModel = model<Document<Partner>>('Partner', partnerSchema);

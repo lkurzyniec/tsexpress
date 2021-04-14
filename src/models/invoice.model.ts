@@ -45,4 +45,4 @@ export class Invoice extends BaseModel {
   }
 }
 
-export const InvoiceModel = model<Invoice & Document>('Invoice', invoiceSchema);
+export const InvoiceModel = model<Document<Invoice>>('Invoice', invoiceSchema);

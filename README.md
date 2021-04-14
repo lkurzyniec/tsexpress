@@ -60,11 +60,12 @@ Install dependencies executing `npm install`.
 
 ### Start the application
 
-Type `npm run dev` in terminal, the application will be available under `http://localhost:{APPLICATION_PORT}/` where `APPLICATION_PORT` is environment variable. By default is `http://localhost:5000/`.
+Type `npm run dev` in terminal, the application will be available under `http://localhost:{APPLICATION_PORT}/` where `APPLICATION_PORT` is environment variable.
+By default is <http://localhost:5000/>.
 
 To interact with API you can either send requests with [Postman](https://www.getpostman.com/) or send exemplary
 request from [http queries](server-queries.http) file with [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client)
 which is VSCode extension.
 If you choose the second option, then remember to double check your `PORT` value from `.env` configuration file with `@apiUrl` variable.
 
-Swagger documentation is under `http://localhost:5000/swagger/`, but there is not much.
+Swagger documentation is under <http://localhost:5000/swagger/>, but there is not much.

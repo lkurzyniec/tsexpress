@@ -8,5 +8,6 @@ export abstract class StatusHelper {
 
   public static error400BadRequest: HttpError = new HttpError(400);
   public static error401Unauthorized: HttpError = new HttpError(401);
+  public static error403Forbidden: HttpError = new HttpError(403);
   public static error404NotFound: HttpError = new HttpError(404);
 }
